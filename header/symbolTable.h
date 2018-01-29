@@ -43,8 +43,9 @@ typedef struct symTable SymTable;
 //Prototipos das funcoes
 int initSymTable(SymTable* table);
 void printSymTable(SymTable* table);
-int addSymTable(SymTable* table, SymTableEntry* data);
+int addSymTable(SymTable* table, char* identifier, Type type, char* value);
 SymTableEntry* findSymTable(SymTable* table, char* identifier);
+void freeSymTable(SymTable* table);
 
 // int retiraValor( SymTableNode tabHash[],int valor,int qualHash);
 // void liberaTabela(SymTableNode* tab);

@@ -78,25 +78,23 @@ void printSymTable(SymTable* table)
 	
     while (i < table->max_size)
 	{
-		//Se nao tiver nada simplesmente imprime vazio
+		// Se nao tiver nada simplesmente imprime vazio
         if (table->array[i].data.identifier[0] == '\0')
 			printf("[%d]: VAZIO\n", i);
 
-        // Caso tenha mais valores, ele imprime o primeiro e os nextimos abaixo dele
         else
         { 
-			printf("[%d]: %s", i, table->array[i].data.identifier);
+			SymTableNode *aux = &table->array[i];
 			
-			SymTableNode *aux; //declaracao de variavel auxiliar do SymTableNode
-			aux = table->array[i].next; //apontando para o nextimo da tabela
-
-			/*E se houver colisao, na insere foi tratada como forma de uma
-			lista encadeada, entao eh necessario percorrer para que
-			seja impresso todos os elementos*/
-			while(aux != NULL)
+			while (aux != NULL)
 			{
-				printf(" || %s",aux->data.identifier);
-				aux = aux->next; //indo para o nextimo
+				printf("[%d]: {%s} {%d} {%s}", i,
+					aux->data.identifier, aux->data.type, aux->data.value);
+			
+				if (aux->next != NULL)
+					printf("\n\t| ");
+
+				aux = aux->next;
 			}
 			printf("\n");
 		}
@@ -104,43 +102,63 @@ void printSymTable(SymTable* table)
 	}
 }
 
+
 //Funcao de insercao na tabela Hash
-int addSymTable(SymTable* table, SymTableEntry* data)
+int addSymTable(SymTable* table, char* identifier, Type type, char* value)
 {
 	int pos;
-	pos = hashFunction(table->max_size, data->identifier);
-    printf("indice da string {%s}: %d\n", data->identifier, pos);
+	pos = hashFunction(table->max_size, identifier);
 	
+	SymTableNode* aux = NULL;
+
 	// Verifica se a posicao esta livre
     if (table->array[pos].data.identifier[0] == '\0')
-	{
-		table->array[pos].data = *data;
-        // strcpy(table->array[pos].data.identifier, data->identifier);
-
-        return 1;
-	}
+		aux = &table->array[pos];
 
     else
 	{
 		// verificando se ja nao se trata de uma dado repetido
-        SymTableNode* aux = &table->array[pos];
-        while (aux != NULL && strcmp(aux->data.identifier, data->identifier) != 0)
+        aux = &table->array[pos];
+        while (aux != NULL && strcmp(aux->data.identifier, identifier) != 0)
             aux = aux->next;
+        if (aux != NULL) return 0;
 
-        if (aux != NULL)
-            return 0;
+        aux = (SymTableNode*) malloc(sizeof(SymTableNode));
+        if (aux == NULL) return 0;
 
-        SymTableNode* new_node = (SymTableNode*) malloc(sizeof(SymTableNode));
-		new_node->data = *data;
-        // strcpy(new_node->data.identifier, data->identifier);
-
-        // A tabela passa a apontar para o new_node alocado,
+        // A tabela passa a apontar para o aux alocado,
         // assim sempre será inserido no inicio e vai "empurrando a lista"
-        new_node->next = table->array[pos].next;
-		table->array[pos].next = new_node;
+        aux->next = table->array[pos].next;
+		table->array[pos].next = aux;
 
-        return 1;
 	}
+
+	// Identifier
+	strncpy(aux->data.identifier, identifier, MAX_SIZE_SYMBOL - 1);
+	aux->data.identifier[MAX_SIZE_SYMBOL - 1] = '\0';
+
+	// Type
+	aux->data.type = type;
+
+	// Value
+	if (value != NULL)
+	{
+		int n = strlen(value);
+		char* s = (char*) malloc((n + 1) * sizeof(char));
+		if (s == NULL) return 0;
+
+		strncpy(s, value, n);
+		aux->data.value = s;
+		aux->data.value[n] = '\0';
+
+		// Comprimento da string value
+		aux->data.len_value = n;
+	}
+
+	// Incrementa contador da quantidade de elementos na tabela
+	table->size += 1;
+
+    return 1;
 }
 
 
@@ -201,6 +219,36 @@ SymTableEntry* findSymTable(SymTable* table, char* identifier)
 //         return 1; //retorna 1(verdadeiro) como encontrado.
 //     }
 // }
+
+
+
+void freeSymTable(SymTable* table)
+{
+	SymTableNode* node;
+	SymTableNode* aux;
+	for (int i = 0; i < table->max_size; i++)
+	{
+		aux = NULL;
+		node = &table->array[i];
+		if (node->data.identifier[0] != '\0')
+		{
+			free(node->data.value);
+			node = node->next;
+
+			while (node != NULL)
+			{
+				aux = node;
+				node = node->next;
+
+				free(aux->data.value);
+				free(aux);
+			}
+
+		}
+	}
+
+	free(table->array);
+}
 
 
 // //Função que libera toda a mémoria alocada pela tabela e reinicializa ela

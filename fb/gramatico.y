@@ -35,30 +35,26 @@ declaracao: declaracao_inteiro | declaracao_float
 
 
 declaracao_inteiro: VAR ID ':' INT '=' NUM ';'  {
-													printf("to aqui\n");
-													SymTableEntry entry;
-													strcpy(entry.identifier, $2);
-													addSymTable(&table, &entry);
-													printSymTable(&table);
-                                	            // strcpy($$, $2);
-                            	                // printf("Nome da variavel: {%s}\n", $2);
-                        	                    // printf("valor: {%d}\n", $6);
-                    	                    }
-                  | VAR ID ':' INT ';'	{
-                  	// strcpy($$, $2);
-                   //  printf("Nome da variavel: {%s}\n", $2);
-                  }
-                  ;
+	
+		addSymTable(&table, $2, INTEGER, $6);
+	}
 
-declaracao_float: VAR ID ':' FLOAT '=' NUM ';'{
-							// strcpy($$,$2);
-							// printf("Nome da variavel: {%s}\n",$2);
-							// printf("valor: {%f}\n",$6);
-				}
-				| VAR ID ':' FLOAT ';'{
-					// strcpy($$,$2);
-					// printf("Nome da variavel: {%s}\n",$2);
-				}
+	| VAR ID ':' INT ';'  {
+		
+		addSymTable(&table, $2, INTEGER, NULL);
+	}
+;
+
+declaracao_float: VAR ID ':' FLOAT '=' NUM ';'  {
+
+		addSymTable(&table, $2, REAL, $6);
+	}
+
+	| VAR ID ':' FLOAT ';'  {
+
+		addSymTable(&table, $2, REAL, NULL);
+	}
+;
 
 bloco : comandos
 
