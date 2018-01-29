@@ -3,6 +3,7 @@ import os
 import shutil
 import sys
 
+EXEC = "joec"
 
 def compille():
 	i = names.index("fb")
@@ -25,7 +26,7 @@ def compille():
 		command = "flex -o fb/lex.yy.c " + file
 		os.system(command)
 
-	command = "gcc -o go fb/*.c src/*.c -Ifb/ -Iheader/"
+	command = "gcc -o " + EXEC + " fb/*.c src/*.c -Ifb/ -Iheader/"
 	os.system(command)
 
 
