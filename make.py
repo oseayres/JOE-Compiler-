@@ -6,6 +6,7 @@ import sys
 EXEC = "joec"
 
 def compille():
+	# JOAO PAULO MODIFICOU AQUI
 	i = names.index("fb")
 	names_fb = [x.name for x in os.scandir(names[i])]
 
