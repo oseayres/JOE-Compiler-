@@ -2,6 +2,7 @@
     #include <string.h>
     #include <stdio.h>
 	#include <symbolTable.h>
+	#include <codeGeneration.h>
 
     void yyerror(char*);
     int yylex();
@@ -11,14 +12,14 @@
 %}
 
 %union {
-    char str[30];
+    char str[32];
     int integer;
     double real;
 }
 
-%token <str> ID NUM VAR INT FLOAT
+%token <str> ID NUM VAR LITERAL_STR INT FLOAT STR
 
-%type <str> programa declaracoes bloco declaracao declaracao_inteiro declaracao_float 
+%type <str> programa declaracoes bloco declaracao declaracao_inteiro declaracao_float declaracao_string
 %type <str> comandos comando comando_atribuicao
 
 %%
@@ -31,28 +32,45 @@ declaracoes: declaracao declaracoes
 		| { $$[0] = 0;}
 		;
 
-declaracao: declaracao_inteiro | declaracao_float
+declaracao: declaracao_inteiro | declaracao_float | declaracao_string
 
 
 declaracao_inteiro: VAR ID ':' INT '=' NUM ';'  {
 	
 		addSymTable(&table, $2, INTEGER, $6);
+		makeCodeDeclaration($2, INTEGER, $6);
 	}
 
 	| VAR ID ':' INT ';'  {
 		
 		addSymTable(&table, $2, INTEGER, NULL);
+		makeCodeDeclaration($2, INTEGER, NULL);
 	}
 ;
 
 declaracao_float: VAR ID ':' FLOAT '=' NUM ';'  {
 
 		addSymTable(&table, $2, REAL, $6);
+		makeCodeDeclaration($2, REAL, $6);
 	}
 
 	| VAR ID ':' FLOAT ';'  {
 
 		addSymTable(&table, $2, REAL, NULL);
+		makeCodeDeclaration($2, REAL, NULL);
+	}
+;
+
+declaracao_string: VAR ID ':' STR'=' LITERAL_STR ';'  {
+
+		addSymTable(&table, $2, STRING, $6);
+		makeCodeDeclaration($2, STRING, $6);
+	}
+
+	| VAR ID ':' STR ';'  {
+
+		addSymTable(&table, $2, STRING, "");
+		makeCodeDeclaration($2, STRING, "");
 	}
 ;
 

@@ -8,6 +8,7 @@
 ws [ \t\n]
 letter [A-Za-z]
 digit [0-9]
+quotes ['\"']
 
 %%
 
@@ -28,6 +29,12 @@ digit [0-9]
 	return FLOAT;
 }
 
+"string" {
+	strcpy(yylval.str, yytext);
+	return STR;
+}
+
+
 
 {digit}+  {
 	strcpy(yylval.str, yytext);
@@ -43,6 +50,11 @@ digit [0-9]
 	
 	strcpy(yylval.str, yytext);
 	return ID;
+}
+
+{quotes}{letter}*{quotes}  {
+	strcpy(yylval.str, yytext);
+	return LITERAL_STR;
 }
 
 [;:=] {

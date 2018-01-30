@@ -10,6 +10,8 @@
 typedef enum {INTEGER, REAL, STRING} Type;
 
 
+
+
 //Declaracao de tipo de dados
 struct symTableEntry
 {
