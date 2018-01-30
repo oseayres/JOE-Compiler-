@@ -6,6 +6,8 @@ import sys
 EXEC = "joec"
 
 def compille():
+	# OSEIAS MODIFICOU AQUI
+	a = 2
 	i = names.index("fb")
 	names_fb = [x.name for x in os.scandir(names[i])]
 
@@ -15,7 +17,7 @@ def compille():
 			bison = elem
 		elif (elem.endswith(".l")):
 			flex = elem
-	
+
 	if (bison is not None):
 		file = path + "/fb/" + bison
 		command = "bison -d " + file + " -o fb/y.tab.c"
@@ -63,6 +65,3 @@ try:
 
 except IndexError as e:
 	raise e
-
-
-
