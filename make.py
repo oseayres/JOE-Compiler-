@@ -7,6 +7,8 @@ EXEC = "joec"
 
 def compille():
 	# JOAO PAULO MODIFICOU AQUI
+	# OSEIAS MODIFICOU AQUI
+	a = 2
 	i = names.index("fb")
 	names_fb = [x.name for x in os.scandir(names[i])]
 
