@@ -9,6 +9,7 @@ ws [ \t\n]
 letter [A-Za-z]
 digit [0-9]
 quotes ['\"']
+text_str [^'\"']
 
 %%
 
@@ -52,7 +53,7 @@ quotes ['\"']
 	return ID;
 }
 
-{quotes}{letter}*{quotes}  {
+{quotes}{text_str}*{quotes}  {
 	strcpy(yylval.str, yytext);
 	return LITERAL_STR;
 }
