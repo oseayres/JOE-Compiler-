@@ -35,6 +35,12 @@ text_str [^'\"']
 	return STR;
 }
 
+"write" {
+	strcpy(yylval.str, yytext);
+	return WRITE;
+
+}
+
 
 
 {digit}+  {
@@ -58,7 +64,7 @@ text_str [^'\"']
 	return LITERAL_STR;
 }
 
-[;:=] {
+[;:={}] {
 	// printf("Lexic: %c found\n", *yytext);
 	// strcpy(yylval.str, yytext);
 	return *yytext;

@@ -21,9 +21,11 @@
 #include <symbolTable.h>
 #include <y.tab.h>
 
-extern SymTable table;
+
 FILE* out_file = NULL;
 
+
+SymTable table;
 
 int main(int argc, char const *argv[])
 {
@@ -37,8 +39,13 @@ int main(int argc, char const *argv[])
         return 1;
 
     out_file = fopen(argv[3], "w");
+
     fprintf(out_file, "extern printf\n");
     fprintf(out_file, "section .data\n");
+    fprintf(out_file, "fmt_d: db \"%%d\", 10, 0\n");
+    fprintf(out_file, "fmt_f: db \"%%f\", 10, 0\n");
+    fprintf(out_file, "fmt_s: db \"%%s\", 10, 0\n");
+    
     
     
     initSymTable(&table);

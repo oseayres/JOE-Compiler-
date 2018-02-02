@@ -7,7 +7,7 @@
     void yyerror(char*);
     int yylex();
 
-    SymTable table;
+    extern SymTable table;
 
 %}
 
@@ -17,17 +17,22 @@
     double real;
 }
 
-%token <str> ID NUM VAR LITERAL_STR INT FLOAT STR
+%token <str> ID NUM VAR LITERAL_STR INT FLOAT STR WRITE
 
-%type <str> programa declaracoes bloco declaracao declaracao_inteiro declaracao_float declaracao_string
-%type <str> comandos comando comando_atribuicao
+%type <str> programa declaracoes bloco declaracao declaracao_inteiro declaracao_float declaracao_string 
+%type <str> comandos comando comando_atribuicao comando_escrita dec
 
 %%
 
 
-programa: declaracoes bloco 
+programa: dec bloco 
           ;
 
+dec: declaracoes {
+		makeCodeEndDeclaration();
+	 	$$[0] = 0; 
+	}
+;
 declaracoes: declaracao declaracoes
 		| { $$[0] = 0;}
 		;
@@ -74,18 +79,28 @@ declaracao_string: VAR ID ':' STR'=' LITERAL_STR ';'  {
 	}
 ;
 
-bloco : comandos
+bloco : '{' comandos '}'  { $$[0] = 0; }
+;
 
-comandos : comando comandos 
+comandos : comando comandos
 		| 									{ $$[0] = 0; }
-		; 
+		;
 
-comando : comando_atribuicao
+comando : comando_atribuicao { $$[0] = 0; }
+
+	| comando_escrita
+;
 
 comando_atribuicao: ID '=' NUM ';'{
 		// strcpy($$,$2);
 		printf("Atribuicao");
 	}
+
+comando_escrita: WRITE ID ';'  {
+		makeCodeWrite($2);
+		$$[0] = 0;
+	}
+;
 
 %%
 

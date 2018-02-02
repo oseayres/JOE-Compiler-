@@ -6,8 +6,7 @@ import sys
 EXEC = "joec"
 
 def compille():
-	# JOAO PAULO MODIFICOU AQUI
-	# OSEIAS MODIFICOU AQUI
+	
 	a = 2
 	i = names.index("fb")
 	names_fb = [x.name for x in os.scandir(names[i])]
@@ -47,6 +46,27 @@ def make_directories():
 	print("Mova os arquivos para as pastas corretas")
 
 
+def compille_assembly(file_name):
+
+	exe = ""
+	idx = file_name.find(".asm")
+	if (idx != -1):
+		
+		base = file_name[:idx]
+
+		command = "nasm -f elf64 " + file_name
+		os.system(command)
+
+		command = "gcc " + base + ".o" + " -o " + base
+		os.system(command)
+
+		command = "./" + base
+		os.system(command)
+
+
+	else:
+		print("Erro: extensão do arquivo faltando")
+
 
 ls = [x for x in os.scandir()]
 names = [x.name for x in ls]
@@ -60,6 +80,8 @@ try:
 	elif (sys.argv[1] == "--create"):
 		make_directories()
 
+	elif (sys.argv[1] == "--asm"):
+		compille_assembly(sys.argv[2])
 
 
 
