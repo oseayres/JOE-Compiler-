@@ -41,6 +41,11 @@ text_str [^'\"']
 
 }
 
+"read" {
+	strcpy(yylval.str,yytext);
+	return READ;
+}
+
 
 
 {digit}+  {

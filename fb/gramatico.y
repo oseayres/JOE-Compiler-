@@ -17,10 +17,10 @@
     double real;
 }
 
-%token <str> ID NUM VAR LITERAL_STR INT FLOAT STR WRITE
+%token <str> ID NUM VAR LITERAL_STR INT FLOAT STR WRITE READ
 
 %type <str> programa declaracoes bloco declaracao declaracao_inteiro declaracao_float declaracao_string 
-%type <str> comandos comando comando_atribuicao comando_escrita dec
+%type <str> comandos comando comando_atribuicao comando_escrita dec comando_leitura
 
 %%
 
@@ -88,7 +88,7 @@ comandos : comando comandos
 
 comando : comando_atribuicao { $$[0] = 0; }
 
-	| comando_escrita
+	| comando_escrita | comando_leitura
 ;
 
 comando_atribuicao: ID '=' NUM ';'{
@@ -102,12 +102,19 @@ comando_escrita: WRITE ID ';'  {
 	}
 ;
 
+comando_leitura: READ ID ';'{
+		makeCodeRead($2);
+		$$[0] = 0;
+	}
+;
+
+
+
 %%
 
 void yyerror(char *s)
 {
-   fprintf(stderr, "Error: ");
-   fprintf(stderr, s);
+   fprintf(stderr, "Error: %s", s);
    fprintf(stderr, "\n");
 }
 

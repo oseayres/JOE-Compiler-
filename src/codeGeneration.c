@@ -67,7 +67,8 @@ void makeCodeWrite(char *id)
 
     }else
     {
-        if(ret->type == INTEGER){
+        if(ret->type == INTEGER)
+        {
             fprintf(out_file, "mov rdi, fmt_d\n");
             fprintf(out_file, "mov rsi, [%s]\n", ret->identifier);
         }else if(ret->type == REAL)
@@ -83,6 +84,40 @@ void makeCodeWrite(char *id)
        
         fprintf(out_file, "mov rax, 0\n");
         fprintf(out_file, "call printf\n");
+
+    }
+
+}
+
+
+void makeCodeRead(char *id)
+{
+    SymTableEntry *ret;
+    ret = findSymTable(&table,id);
+
+
+    if(ret == NULL)
+    {
+
+    }
+    else
+    {
+        if(ret->type == INTEGER){
+            fprintf(out_file, "mov rdi, fmt_d\n");
+            fprintf(out_file, "mov rsi, %s\n", ret->identifier);
+        }else if(ret->type == REAL)
+        {
+            fprintf(out_file, "mov rdi, fmt_f\n");
+            fprintf(out_file, "mov rsi, %s\n", ret->identifier);
+        }else
+        {
+            fprintf(out_file, "mov rdi, fmt_s\n");
+             fprintf(out_file, "mov rsi, %s\n", ret->identifier);
+        }
+
+       
+        fprintf(out_file, "mov rax, 0\n");
+        fprintf(out_file, "call scanf\n");
 
     }
 
