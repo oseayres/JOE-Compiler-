@@ -122,3 +122,37 @@ void makeCodeRead(char *id)
     }
 
 }
+
+void makeCodeWriteln(char *id)
+{
+    SymTableEntry *ret;
+    ret = findSymTable(&table,id);
+
+    if(ret == NULL)
+    {
+
+    }else
+    {
+        if(ret->type == INTEGER)
+        {
+            fprintf(out_file, "mov rdi, fmt_dln\n");
+            fprintf(out_file, "mov rsi, [%s]\n", ret->identifier);
+        }else if(ret->type == REAL)
+        {
+            fprintf(out_file, "mov rdi, fmt_fln\n");
+            fprintf(out_file, "mov rsi, [%s]\n", ret->identifier);
+        }else
+        {
+            fprintf(out_file, "mov rdi, fmt_sln\n");
+             fprintf(out_file, "mov rsi, %s\n", ret->identifier);
+        }
+
+       
+        fprintf(out_file, "mov rax, 0\n");
+        fprintf(out_file, "call printf\n");
+
+    }
+
+}
+
+

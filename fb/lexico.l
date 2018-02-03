@@ -46,6 +46,13 @@ text_str [^'\"']
 	return READ;
 }
 
+"writeln" {
+	strcpy(yylval.str, yytext);
+	return WRITELN;
+
+}
+
+
 
 
 {digit}+  {

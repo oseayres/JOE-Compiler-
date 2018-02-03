@@ -17,10 +17,10 @@
     double real;
 }
 
-%token <str> ID NUM VAR LITERAL_STR INT FLOAT STR WRITE READ
+%token <str> ID NUM VAR LITERAL_STR INT FLOAT STR WRITE READ WRITELN READLN
 
 %type <str> programa declaracoes bloco declaracao declaracao_inteiro declaracao_float declaracao_string 
-%type <str> comandos comando comando_atribuicao comando_escrita dec comando_leitura
+%type <str> comandos comando comando_atribuicao comando_escrita dec comando_leitura comando_escritaln
 
 %%
 
@@ -88,7 +88,7 @@ comandos : comando comandos
 
 comando : comando_atribuicao { $$[0] = 0; }
 
-	| comando_escrita | comando_leitura
+	| comando_escrita | comando_leitura  | comando_escritaln
 ;
 
 comando_atribuicao: ID '=' NUM ';'{
@@ -107,6 +107,14 @@ comando_leitura: READ ID ';'{
 		$$[0] = 0;
 	}
 ;
+
+
+comando_escritaln: WRITELN ID ';'  {
+		makeCodeWriteln($2);
+		$$[0] = 0;
+	}
+;
+
 
 
 

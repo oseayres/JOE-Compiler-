@@ -62,11 +62,16 @@ int main(int argc, char const *argv[])
     fprintf(out_file, "extern printf\n");
     fprintf(out_file, "extern scanf\n");
     fprintf(out_file, "section .data\n");
+
+    // this is strings that not contains line broken  
     fprintf(out_file, "fmt_d: db \"%%d\", 0\n");
-    fprintf(out_file, "fmt_dln: db \"%%d\", 10, 0\n");
     fprintf(out_file, "fmt_f: db \"%%f\", 0\n");
-    fprintf(out_file, "fmt_fln: db \"%%f\", 10, 0\n");
     fprintf(out_file, "fmt_s: db \"%%s\", 0\n");
+    
+
+    // this is strings that contains line broken 
+    fprintf(out_file, "fmt_dln: db \"%%d\", 10, 0\n");
+    fprintf(out_file, "fmt_fln: db \"%%f\", 10, 0\n");
     fprintf(out_file, "fmt_sln: db \"%%s\", 10, 0\n");
     
     
