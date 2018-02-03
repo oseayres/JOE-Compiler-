@@ -48,6 +48,34 @@ void makeCodeDeclaration(char* identifier, Type type, char* value)
     }
 }
 
+
+void makeCodeAssignment(char *value, char *valueReal)
+{   
+    SymTableEntry *ret;
+    ret = findSymTable(&table,value);
+
+    if(ret == NULL)
+    {
+        // not found in table
+    }else
+    {
+        if(ret->type == INTEGER)
+        {
+            fprintf(out_file, "pop rbx\n");
+            // fprintf(out_file, "mov rbx, %s\n",valueReal);
+            fprintf(out_file, "mov [%s], rbx\n", ret->identifier);
+
+
+        }
+        else
+        {
+            printf("SOU um compilador burro e nao sei somar float ou string\n");
+        }
+
+    }
+
+}
+
 void makeCodeEndDeclaration()
 {
     fprintf(out_file, "\nsection .text\n");
@@ -152,6 +180,39 @@ void makeCodeWriteln(char *id)
         fprintf(out_file, "call printf\n");
 
     }
+
+}
+
+
+void makeCodeStack(char *id)
+{
+    fprintf(out_file, "mov rax,%s\n",id );
+    fprintf(out_file, "push rax\n");
+}
+
+void makeCodeAdd()
+{
+    fprintf(out_file, "pop rax\n");
+    fprintf(out_file, "pop rbx\n");
+    fprintf(out_file, "add rbx,rax\n");
+    fprintf(out_file, "push rbx\n");
+}
+
+void makeCodeSub()
+{   
+    fprintf(out_file, "pop rax\n");
+    fprintf(out_file, "pop rbx\n");
+    fprintf(out_file, "sub rbx,rax\n");
+    fprintf(out_file, "push rbx\n");
+
+}
+
+void makeCodeMul()
+{
+    fprintf(out_file, "pop rax\n");
+    fprintf(out_file, "pop rbx\n");
+    fprintf(out_file, "imul rbx,rax\n");
+    fprintf(out_file, "push rbx\n");
 
 }
 

@@ -21,6 +21,9 @@
 
 %type <str> programa declaracoes bloco declaracao declaracao_inteiro declaracao_float declaracao_string 
 %type <str> comandos comando comando_atribuicao comando_escrita dec comando_leitura comando_escritaln
+%type <str> expressao_numerica termo fator
+%left '+' '-'
+%left '*' '/'
 
 %%
 
@@ -91,10 +94,54 @@ comando : comando_atribuicao { $$[0] = 0; }
 	| comando_escrita | comando_leitura  | comando_escritaln
 ;
 
-comando_atribuicao: ID '=' NUM ';'{
-		// strcpy($$,$2);
-		printf("Atribuicao");
+comando_atribuicao: ID '=' expressao_numerica ';' {
+		makeCodeAssignment($1, $3);
+		
 	}
+;
+
+expressao_numerica: termo{
+		strcpy($$,$1);
+	}
+	| expressao_numerica '+' expressao_numerica {
+
+		makeCodeAdd();
+	}
+	| expressao_numerica '-' expressao_numerica{
+		makeCodeSub();
+	}
+	| termo '*' fator {
+		makeCodeMul();
+	}
+
+
+;
+
+
+
+termo: NUM {
+
+		strcpy($$,$1);
+		makeCodeStack($$);
+	}
+	| ID {
+		strcpy($$,$1);
+		makeCodeStack($$);	
+	}
+;
+
+fator: NUM {
+		strcpy($$,$1);
+		makeCodeStack($$);
+	}
+	| ID {
+		strcpy($$,$1);
+	}
+	| '(' expressao_numerica ')'{
+		// printf("expressao numerica\n");
+		strcpy($$,$2);
+	}
+;
 
 comando_escrita: WRITE ID ';'  {
 		makeCodeWrite($2);

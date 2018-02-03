@@ -76,7 +76,7 @@ text_str [^'\"']
 	return LITERAL_STR;
 }
 
-[;:={}] {
+[-;:={}+*()] {
 	// printf("Lexic: %c found\n", *yytext);
 	// strcpy(yylval.str, yytext);
 	return *yytext;

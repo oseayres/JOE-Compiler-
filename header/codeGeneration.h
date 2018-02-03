@@ -15,9 +15,11 @@ void makeCodeEndDeclaration();
 void makeCodeRead(char *id);
 void makeCodeWriteln(char *id);
 void makeCodeReadln(char *id);
-
-
-
+void makeCodeAssignment(char *value, char *valueReal);
+void makeCodeStack(char *id);
+void makeCodeAdd();
+void makeCodeSub();
+void makeCodeMul();
 
 #endif
 
