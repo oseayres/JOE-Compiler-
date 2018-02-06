@@ -7,7 +7,16 @@
 #include <codeGeneration.h>
 
 
+void makeLabel(char* out_label)
+{
+    static int count_label = 0;
+    strcpy(out_label, "label");
+    strcat(out_label, atoi(count_label));
 
+    count_label++;
+
+    printf("Label gerado: {%s}\n", out_file);
+}
 
 
 void makeCodeDeclaration(char* identifier, Type type, char* value)
@@ -217,3 +226,32 @@ void makeCodeMul()
 }
 
 
+void makeCodeComp(char *id,char *operador,char *id2 )
+{
+    SymTableEntry *ret;
+    SymTableEntry *ret2;
+    ret = findSymTable(&table,id);
+    ret2 = findSymTable(&table,id2);
+
+    if(ret == NULL || ret2 == NULL)
+    {
+
+    }else
+    {
+        fprintf(out_file, "mov rbx,[%s]\n",ret->identifier);
+        fprintf(out_file, "mov rax,[%s]\n",ret2->identifier);
+        fprintf(out_file, "cmp rbx,rax\n");
+    }
+}
+
+void makeCodeJump(char *id)
+{
+    if(strcmp(id,"<"))
+    {
+        fprintf(out_file, "jae\n");
+    }else if(strcmp(id,">"))
+    {
+        fprintf(out_file, "jbe\n");
+    }
+    
+}

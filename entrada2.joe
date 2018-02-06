@@ -1,0 +1,12 @@
+
+var deus: int = 564;
+var capeta : string = "oseias";
+var jesus : int;
+{
+	jesus = 2;
+	writeln capeta;
+	if(jesus < deus ){
+		writeln jesus;
+	}
+	writeln capeta;
+}

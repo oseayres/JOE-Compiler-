@@ -5,11 +5,11 @@ import sys
 
 
 EXEC = "joec"
-JOE_EXTENSION = ".txt"
+JOE_EXTENSION = ".joe"
 ASM_BIN = "asm_bin/"
 
 def compille():
-	
+
 	a = 2
 	i = names.index("fb")
 	names_fb = [x.name for x in os.scandir(names[i])]
@@ -20,7 +20,7 @@ def compille():
 			bison = elem
 		elif (elem.endswith(".l")):
 			flex = elem
-	
+
 	if (bison is not None):
 		file = path + "/fb/" + bison
 		print("[1: bison]")
@@ -34,7 +34,7 @@ def compille():
 		os.system(command)
 
 	print("[3: gcc]")
-	command = "gcc -o " + EXEC + " fb/*.c src/*.c -Ifb/ -Iheader/"
+	command = "gcc -g -o " + EXEC + " fb/*.c src/*.c -Ifb/ -Iheader/"
 	os.system(command)
 
 
@@ -56,7 +56,7 @@ def compille_assembly(file_name):
 
 	idx = file_name.find(".asm")
 	if (idx != -1):
-		
+
 		base = file_name[:idx]
 
 		print("[1: nasm]")
@@ -64,7 +64,7 @@ def compille_assembly(file_name):
 		os.system(command)
 
 		print("[2: gcc]")
-		command = "gcc " + base + ".o" + " -o " + ASM_BIN + base
+		command = "gcc -g " + base + ".o" + " -o " + ASM_BIN + base
 		os.system(command)
 
 		command = base + ".o"
@@ -117,6 +117,3 @@ try:
 
 except IndexError as e:
 	print("Erro: verifique os modos de uso")
-
-
-

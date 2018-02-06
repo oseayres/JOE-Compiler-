@@ -11,6 +11,7 @@ digit [0-9]
 quotes ['\"']
 text_str [^'\"']
 
+
 %%
 
 "var"	{
@@ -52,7 +53,15 @@ text_str [^'\"']
 
 }
 
+"if" {
+	strcpy(yylval.str, yytext);
+	return IF;
+}
 
+"then" {
+	strcpy(yylval.str, yytext);
+	return THEN;
+}
 
 
 {digit}+  {
@@ -76,7 +85,10 @@ text_str [^'\"']
 	return LITERAL_STR;
 }
 
-[-;:={}+*()] {
+
+
+
+[-;:={}+*()<>] {
 	// printf("Lexic: %c found\n", *yytext);
 	// strcpy(yylval.str, yytext);
 	return *yytext;

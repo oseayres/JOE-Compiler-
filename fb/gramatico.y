@@ -12,16 +12,16 @@
 %}
 
 %union {
-    char str[32];
+    char str[256];
     int integer;
     double real;
 }
 
-%token <str> ID NUM VAR LITERAL_STR INT FLOAT STR WRITE READ WRITELN READLN
+%token <str> ID NUM VAR LITERAL_STR INT FLOAT STR WRITE READ WRITELN READLN IF THEN
 
 %type <str> programa declaracoes bloco declaracao declaracao_inteiro declaracao_float declaracao_string 
 %type <str> comandos comando comando_atribuicao comando_escrita dec comando_leitura comando_escritaln
-%type <str> expressao_numerica termo fator
+%type <str> expressao_numerica termo fator comando_se expressao_booleana operador_relacional
 %left '+' '-'
 %left '*' '/'
 
@@ -82,7 +82,10 @@ declaracao_string: VAR ID ':' STR'=' LITERAL_STR ';'  {
 	}
 ;
 
-bloco : '{' comandos '}'  { $$[0] = 0; }
+bloco : '{' comandos '}'  {
+		 $$[0] = 0;
+
+	}
 ;
 
 comandos : comando comandos
@@ -91,15 +94,48 @@ comandos : comando comandos
 
 comando : comando_atribuicao { $$[0] = 0; }
 
-	| comando_escrita | comando_leitura  | comando_escritaln
+	| comando_escrita | comando_leitura  | comando_escritaln | comando_se
 ;
 
 comando_atribuicao: ID '=' expressao_numerica ';' {
+		printf("Expressao booleana\n");
+		makeCodeAssignment($1, $3);
+		
+	} |
+	ID '=' expressao_booleana ';' {
+		printf("Expressao booleana\n");
 		makeCodeAssignment($1, $3);
 		
 	}
 ;
 
+comando_se: IF '(' expressao_booleana ')' THEN bloco {
+		strcpy($$,$1);
+		makeCodeJump($3);
+	}
+;
+
+expressao_booleana:  ID operador_relacional ID {
+		
+		//strcpy($$,$2);
+		makeCodeComp($1,$2,$3);
+
+	}
+;
+
+operador_relacional: '<' {
+		char p[2];
+		p[0] = '<';
+		p[1] = '\0';
+		strcpy($$,p);
+	} 
+	| '>'{
+		char p[2];
+		p[0] = '<';
+		p[1]  = '\0';
+		strcpy($$,p);
+	}
+;
 expressao_numerica: termo{
 		strcpy($$,$1);
 	}

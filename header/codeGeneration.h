@@ -9,6 +9,7 @@
 
 extern FILE* out_file;
 
+void makeLabel(char* out_label);
 void makeCodeDeclaration(char* identifier, Type type, char* value);
 void makeCodeWrite(char *id);
 void makeCodeEndDeclaration();
@@ -20,6 +21,8 @@ void makeCodeStack(char *id);
 void makeCodeAdd();
 void makeCodeSub();
 void makeCodeMul();
+void makeCodeComp(char *id,char *operador,char *id );
+void makeCodeJump(char *id);
 
 #endif
 
