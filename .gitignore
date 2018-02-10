@@ -3,6 +3,8 @@ fb/*.h
 asm_bin/*
 *.txt
 *.asm
-
+*.joe
 joec
+
+!test_files/*.joe
 
