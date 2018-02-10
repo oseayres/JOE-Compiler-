@@ -27,6 +27,9 @@ FILE* out_file = NULL;
 
 SymTable table;
 
+char jumps[10][4] = {"jnl", "jng", "jne", "jnz", "", "jz", "je", "jg", "jl", "jmp"};
+
+
 int main(int argc, char const *argv[])
 {
     if (argc < 2)
@@ -52,9 +55,9 @@ int main(int argc, char const *argv[])
         }
 
         strncpy(s, argv[1], i);
-        printf("{%s}\n", s);
+        // printf("{%s}\n", s);
         strcat(s, ".asm");
-        printf("{%s}\n", s);
+        // printf("{%s}\n", s);
         out_file = fopen(s, "w");
     }
 
@@ -63,14 +66,14 @@ int main(int argc, char const *argv[])
     fprintf(out_file, "extern scanf\n");
     fprintf(out_file, "section .data\n");
 
-    // this is strings that not contains line broken  
-    fprintf(out_file, "fmt_d: db \"%%d\", 0\n");
+    // this are strings without a line break character
+    fprintf(out_file, "fmt_d: db \"%%ld\", 0\n");
     fprintf(out_file, "fmt_f: db \"%%f\", 0\n");
     fprintf(out_file, "fmt_s: db \"%%s\", 0\n");
     
 
-    // this is strings that contains line broken 
-    fprintf(out_file, "fmt_dln: db \"%%d\", 10, 0\n");
+    // this are strings that contain a line break character
+    fprintf(out_file, "fmt_dln: db \"%%ld\", 10, 0\n");
     fprintf(out_file, "fmt_fln: db \"%%f\", 10, 0\n");
     fprintf(out_file, "fmt_sln: db \"%%s\", 10, 0\n");
     

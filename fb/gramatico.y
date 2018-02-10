@@ -12,16 +12,23 @@
 %}
 
 %union {
-    char str[256];
     int integer;
+	struct code_t
+	{
+		char str[256];
+		int op;
+	} c;
+    // char str[256];
     double real;
 }
 
-%token <str> ID NUM VAR LITERAL_STR INT FLOAT STR WRITE READ WRITELN READLN IF THEN
+%token <c.str> ID NUM VAR LITERAL_STR INT FLOAT STR WRITE READ WRITELN IF THEN
 
-%type <str> programa declaracoes bloco declaracao declaracao_inteiro declaracao_float declaracao_string 
-%type <str> comandos comando comando_atribuicao comando_escrita dec comando_leitura comando_escritaln
-%type <str> expressao_numerica termo fator comando_se expressao_booleana operador_relacional
+%type <c.str> programa declaracoes bloco declaracao declaracao_inteiro declaracao_float declaracao_string 
+%type <c.str> comandos comando comando_atribuicao comando_escrita dec comando_leitura comando_escritaln
+%type <c.str> expressao_numerica termo fator comando_se
+%type <c> expressao_booleana operador_relacional
+
 %left '+' '-'
 %left '*' '/'
 
@@ -98,42 +105,44 @@ comando : comando_atribuicao { $$[0] = 0; }
 ;
 
 comando_atribuicao: ID '=' expressao_numerica ';' {
-		printf("Expressao booleana\n");
-		makeCodeAssignment($1, $3);
-		
-	} |
-	ID '=' expressao_booleana ';' {
-		printf("Expressao booleana\n");
+		// printf("Expressao booleana\n");
 		makeCodeAssignment($1, $3);
 		
 	}
+	// | ID '=' expressao_booleana ';' {
+	// 	// printf("Expressao booleana\n");
+	// 	makeCodeAssignment($1, $3);
+		
+	// }
 ;
 
-comando_se: IF '(' expressao_booleana ')' THEN bloco {
+comando_se: IF '(' expressao_booleana ')' THEN  {
 		strcpy($$,$1);
-		makeCodeJump($3);
+		makeCodeIf(NULL, $3.str, $3.op, NULL);
+		printf("\n[\n%s\n]\n\n", $3.str);
 	}
 ;
 
-expressao_booleana:  ID operador_relacional ID {
+
+
+
+expressao_booleana: ID operador_relacional ID {
 		
-		//strcpy($$,$2);
-		makeCodeComp($1,$2,$3);
+		$$.op = $2.op;
+		makeCodeComp($$.str, $1, $3);
 
 	}
 ;
 
-operador_relacional: '<' {
-		char p[2];
-		p[0] = '<';
-		p[1] = '\0';
-		strcpy($$,p);
-	} 
-	| '>'{
-		char p[2];
-		p[0] = '<';
-		p[1]  = '\0';
-		strcpy($$,p);
+operador_relacional: '<'  {
+		
+		$$.str[0] = '\0';
+		$$.op = -4;
+	}
+
+	| '>'  {
+		$$.str[0] = '\0';
+		$$.op = -3;
 	}
 ;
 expressao_numerica: termo{
@@ -143,7 +152,7 @@ expressao_numerica: termo{
 
 		makeCodeAdd();
 	}
-	| expressao_numerica '-' expressao_numerica{
+	| expressao_numerica '-' expressao_numerica {
 		makeCodeSub();
 	}
 	| termo '*' fator {

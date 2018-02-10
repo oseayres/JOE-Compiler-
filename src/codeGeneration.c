@@ -9,13 +9,16 @@
 
 void makeLabel(char* out_label)
 {
-    static int count_label = 0;
+    static int label_count = 0;
     strcpy(out_label, "label");
-    strcat(out_label, atoi(count_label));
+    
+    char s[10];
+    sprintf(s, "%d", label_count);
+    strcat(out_label, s);
 
-    count_label++;
+    label_count++;
 
-    printf("Label gerado: {%s}\n", out_file);
+    printf("Label gerado: {%s}\n", out_label);
 }
 
 
@@ -24,12 +27,12 @@ void makeCodeDeclaration(char* identifier, Type type, char* value)
     if (type == INTEGER)
     {
         if (value == NULL)
-        	fprintf(out_file, "%s: dd 0\n", identifier);
+        	fprintf(out_file, "%s: dq 0\n", identifier);
 
         else
         {
         	int x = atoi(value);
-        	fprintf(out_file, "%s: dd %d\n", identifier, x);
+        	fprintf(out_file, "%s: dq %d\n", identifier, x);
         }
     }
 
@@ -226,7 +229,7 @@ void makeCodeMul()
 }
 
 
-void makeCodeComp(char *id,char *operador,char *id2 )
+void makeCodeComp(char* dest, char* id, char* id2)
 {
     SymTableEntry *ret;
     SymTableEntry *ret2;
@@ -238,20 +241,33 @@ void makeCodeComp(char *id,char *operador,char *id2 )
 
     }else
     {
-        fprintf(out_file, "mov rbx,[%s]\n",ret->identifier);
-        fprintf(out_file, "mov rax,[%s]\n",ret2->identifier);
-        fprintf(out_file, "cmp rbx,rax\n");
+        sprintf(dest, "mov rbx, [%s]\n", ret->identifier);
+        sprintf(dest + strlen(dest), "mov rax, [%s]\n", ret2->identifier);
+        sprintf(dest + strlen(dest), "cmp rbx, rax\n");
+
+
+        // fprintf(out_file, "mov rbx,[%s]\n",ret->identifier);
+        // fprintf(out_file, "mov rax,[%s]\n",ret2->identifier);
+        // fprintf(out_file, "cmp rbx,rax\n");
     }
 }
 
-void makeCodeJump(char *id)
+void makeCodeIf(char* dest, char* expr_code, int expr_jump, char* block_code)
 {
-    if(strcmp(id,"<"))
+    char label[16];
+    makeLabel(label);
+
+    if (dest == NULL)
     {
-        fprintf(out_file, "jae\n");
-    }else if(strcmp(id,">"))
-    {
-        fprintf(out_file, "jbe\n");
+        fprintf(out_file, "%s\n", expr_code);
+        fprintf(out_file, "%s %s\n", jumps[expr_jump + JUMPS_ARRAY_OFFSET],
+            label);
+
+        // Fazendo o cadigo de uma atribuição
+        fprintf(out_file, "mov rbx, 1234\n");
+        fprintf(out_file, "mov [jesus], rbx\n");
+
+
+        fprintf(out_file, "%s:\n", label);
     }
-    
 }

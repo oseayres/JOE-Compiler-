@@ -14,74 +14,76 @@ text_str [^'\"']
 
 %%
 
+"//".*\n  {}
+
 "var"	{
 	// printf("Lexic: var found\n");
-	strcpy(yylval.str, yytext);
+	strcpy(yylval.c.str, yytext);
 	return VAR;
 }
 
 "int"	{
 	// printf("Lexic: int found\n");
-	strcpy(yylval.str, yytext);
+	strcpy(yylval.c.str, yytext);
 	return INT;
 }
 
 "float" {
-	strcpy(yylval.str, yytext);
+	strcpy(yylval.c.str, yytext);
 	return FLOAT;
 }
 
 "string" {
-	strcpy(yylval.str, yytext);
+	strcpy(yylval.c.str, yytext);
 	return STR;
 }
 
 "write" {
-	strcpy(yylval.str, yytext);
+	strcpy(yylval.c.str, yytext);
 	return WRITE;
 
 }
 
 "read" {
-	strcpy(yylval.str,yytext);
+	strcpy(yylval.c.str,yytext);
 	return READ;
 }
 
 "writeln" {
-	strcpy(yylval.str, yytext);
+	strcpy(yylval.c.str, yytext);
 	return WRITELN;
 
 }
 
 "if" {
-	strcpy(yylval.str, yytext);
+	strcpy(yylval.c.str, yytext);
 	return IF;
 }
 
 "then" {
-	strcpy(yylval.str, yytext);
+	strcpy(yylval.c.str, yytext);
 	return THEN;
 }
 
 
 {digit}+  {
-	strcpy(yylval.str, yytext);
+	strcpy(yylval.c.str, yytext);
 	return NUM;
 }
 
 {digit}+"."{digit}+ {
-	strcpy(yylval.str, yytext);
+	strcpy(yylval.c.str, yytext);
 	return NUM;
 }
 
 {letter}({letter}|{digit}|_)*	{
 	
-	strcpy(yylval.str, yytext);
+	strcpy(yylval.c.str, yytext);
 	return ID;
 }
 
 {quotes}{text_str}*{quotes}  {
-	strcpy(yylval.str, yytext);
+	strcpy(yylval.c.str, yytext);
 	return LITERAL_STR;
 }
 

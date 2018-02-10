@@ -23,17 +23,17 @@ def compille():
 
 	if (bison is not None):
 		file = path + "/fb/" + bison
-		print("[1: bison]")
+		print("[1: bison]:")
 		command = "bison -d " + file + " -o fb/y.tab.c"
 		os.system(command)
 
 	if (flex is not None):
 		file = path + "/fb/" + flex
-		print("[2: flex]")
+		print("[2: flex]:")
 		command = "flex -o fb/lex.yy.c " + file
 		os.system(command)
 
-	print("[3: gcc]")
+	print("[3: gcc]:")
 	command = "gcc -g -o " + EXEC + " fb/*.c src/*.c -Ifb/ -Iheader/"
 	os.system(command)
 
@@ -59,18 +59,18 @@ def compille_assembly(file_name):
 
 		base = file_name[:idx]
 
-		print("[1: nasm]")
+		print("[1: nasm]:")
 		command = "nasm -f elf64 " + file_name
 		os.system(command)
 
-		print("[2: gcc]")
+		print("[2: gcc]:")
 		command = "gcc -g " + base + ".o" + " -o " + ASM_BIN + base
 		os.system(command)
 
 		command = base + ".o"
 		os.remove(command)
 
-		print("[3: run]")
+		print("[3: run {", ASM_BIN + base, "}]:", sep="")
 		command = ASM_BIN + base
 		os.system(command)
 
@@ -80,6 +80,7 @@ def compille_assembly(file_name):
 
 def run_joe(input_file):
 
+	print("[4: JOE-Compiler]:")
 	command = "./joec " + input_file
 	os.system(command)
 
