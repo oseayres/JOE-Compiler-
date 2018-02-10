@@ -1,6 +1,8 @@
 fb/*.c
 fb/*.h
+asm_bin/*
 *.txt
 *.asm
+
 joec
 
