@@ -24,7 +24,7 @@ def compille():
 	if (bison is not None):
 		file = path + "/fb/" + bison
 		print("[1: bison]:")
-		command = "bison -d " + file + " -o fb/y.tab.c"
+		command = "bison -W -d " + file + " -o fb/y.tab.c"
 		os.system(command)
 
 	if (flex is not None):

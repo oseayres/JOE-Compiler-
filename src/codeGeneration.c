@@ -22,42 +22,50 @@ void makeLabel(char* out_label)
 }
 
 
-void makeCodeDeclaration(char* identifier, Type type, char* value)
+void dumpDeclarationEndCode()
+{
+    fprintf(out_file, "\nsection .text\n");
+    fprintf(out_file, "global main\n");
+    fprintf(out_file, "\nmain:\n");
+}
+
+
+void makeCodeDeclaration(char* dest, char* identifier, Type type, char* value)
 {
     if (type == INTEGER)
     {
         if (value == NULL)
-        	fprintf(out_file, "%s: dq 0\n", identifier);
+        	sprintf(dest, "%s: dq 0\n", identifier);
 
         else
         {
         	int x = atoi(value);
-        	fprintf(out_file, "%s: dq %d\n", identifier, x);
+            sprintf(dest, "%s: dq %d\n", identifier, x);
         }
     }
 
-    else if (type == REAL)
-    {
-    	if (value == NULL)
-        	fprintf(out_file, "%s: dq 0 \n", identifier);
+    // else if (type == REAL)
+    // {
+    // 	if (value == NULL)
+    //     	fprintf(out_file, "%s: dq 0 \n", identifier);
 
-        else
-        {
-          	double x = atof(value);
-        	fprintf(out_file, "%s: dq %f\n", identifier, x);
-        }
-    }
+    //     else
+    //     {
+    //       	double x = atof(value);
+    //     	fprintf(out_file, "%s: dq %f\n", identifier, x);
+    //     }
+    // }
 
-    else if (type == STRING)
-    {
-    	if (value == NULL)
-        	fprintf(out_file, "%s: db 0 \n", identifier);
+    // else if (type == STRING)
+    // {
+    // 	if (value == NULL)
+    //     	fprintf(out_file, "%s: db 0 \n", identifier);
 
-        else
-        {
-          	fprintf(out_file, "%s: db %s, 0\n", identifier, value);
-        }
-    }
+    //     else
+    //     {
+    //       	fprintf(out_file, "%s: db %s, 0\n", identifier, value);
+    //     }
+    // }
 }
 
 
@@ -88,14 +96,6 @@ void makeCodeAssignment(char *value, char *valueReal)
 
 }
 
-void makeCodeEndDeclaration()
-{
-    fprintf(out_file, "\nsection .text\n");
-    fprintf(out_file, "global main\n");
-    fprintf(out_file, "\nmain:\n");
-    
-
-}
 
 void makeCodeWrite(char *id)
 {

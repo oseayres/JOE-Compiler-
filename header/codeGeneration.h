@@ -13,9 +13,9 @@ extern char jumps[10][4];
 extern FILE* out_file;
 
 void makeLabel(char* out_label);
-void makeCodeDeclaration(char* identifier, Type type, char* value);
+void dumpDeclarationEndCode();
+void makeCodeDeclaration(char* dest, char* identifier, Type type, char* value);
 void makeCodeWrite(char *id);
-void makeCodeEndDeclaration();
 void makeCodeRead(char *id);
 void makeCodeWriteln(char *id);
 void makeCodeReadln(char *id);

@@ -9,6 +9,8 @@
 
     extern SymTable table;
 
+    char s_decs[256];
+
 %}
 
 %union {
@@ -22,12 +24,13 @@
     double real;
 }
 
-%token <c.str> ID NUM VAR LITERAL_STR INT FLOAT STR WRITE READ WRITELN IF THEN
 
-%type <c.str> programa declaracoes bloco declaracao declaracao_inteiro declaracao_float declaracao_string 
-%type <c.str> comandos comando comando_atribuicao comando_escrita dec comando_leitura comando_escritaln
-%type <c.str> expressao_numerica termo fator comando_se
-%type <c> expressao_booleana operador_relacional
+
+
+%type <c> programa declaracoes declaracao
+%type <c> declaracao_inteiro
+
+%token <c> VAR ID NUM LITERAL_STR INT FLOAT STR WRITE READ WRITELN IF THEN
 
 %left '+' '-'
 %left '*' '/'
@@ -35,34 +38,42 @@
 %%
 
 
-programa: dec bloco 
-          ;
-
-dec: declaracoes {
-		makeCodeEndDeclaration();
-	 	$$[0] = 0; 
+programa: declaracoes  {
+		
+		fprintf(out_file, "%s", $1.str);
+		dumpDeclarationEndCode();
 	}
 ;
-declaracoes: declaracao declaracoes
-		| { $$[0] = 0;}
-		;
 
-declaracao: declaracao_inteiro | declaracao_float | declaracao_string
+
+declaracoes: declaracao declaracoes  {
+
+		sprintf($$.str + strlen($$.str), "%s", $2.str);
+	}
+	| %empty { $$.str[0] = '\0'; }
+;
+
+
+declaracao: declaracao_inteiro { strcpy($$.str, $1.str); }
+	//| declaracao_float
+	//| declaracao_string
+;
 
 
 declaracao_inteiro: VAR ID ':' INT '=' NUM ';'  {
 	
-		addSymTable(&table, $2, INTEGER, $6);
-		makeCodeDeclaration($2, INTEGER, $6);
+		addSymTable(&table, $2.str, INTEGER, $6.str);
+		makeCodeDeclaration($$.str, $2.str, INTEGER, $6.str);
 	}
 
 	| VAR ID ':' INT ';'  {
 		
-		addSymTable(&table, $2, INTEGER, NULL);
-		makeCodeDeclaration($2, INTEGER, NULL);
+		addSymTable(&table, $2.str, INTEGER, NULL);
+		makeCodeDeclaration($$.str, $2.str, INTEGER, NULL);
 	}
 ;
 
+/*
 declaracao_float: VAR ID ':' FLOAT '=' NUM ';'  {
 
 		addSymTable(&table, $2, REAL, $6);
@@ -207,7 +218,7 @@ comando_escritaln: WRITELN ID ';'  {
 	}
 ;
 
-
+*/
 
 
 %%
