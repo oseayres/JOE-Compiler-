@@ -44,28 +44,28 @@ void makeCodeDeclaration(char* dest, char* identifier, Type type, char* value)
         }
     }
 
-    // else if (type == REAL)
-    // {
-    // 	if (value == NULL)
-    //     	fprintf(out_file, "%s: dq 0 \n", identifier);
+    else if (type == REAL)
+    {
+    	if (value == NULL)
+            sprintf(dest, "%s: dq 0\n", identifier);
 
-    //     else
-    //     {
-    //       	double x = atof(value);
-    //     	fprintf(out_file, "%s: dq %f\n", identifier, x);
-    //     }
-    // }
+        else
+        {
+          	double x = atof(value);
+            sprintf(dest, "%s: dq %f\n", identifier, x);
+        }
+    }
 
-    // else if (type == STRING)
-    // {
-    // 	if (value == NULL)
-    //     	fprintf(out_file, "%s: db 0 \n", identifier);
+    else if (type == STRING)
+    {
+    	if (value == NULL)
+            sprintf(dest, "%s: times %d db 0 \n", identifier, STRING_SIZE);
 
-    //     else
-    //     {
-    //       	fprintf(out_file, "%s: db %s, 0\n", identifier, value);
-    //     }
-    // }
+        else
+        {
+            sprintf(dest, "%s: db %s, 0\n", identifier, value);
+        }
+    }
 }
 
 

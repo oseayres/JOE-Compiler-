@@ -27,8 +27,8 @@
 
 
 
-%type <c> programa declaracoes declaracao
-%type <c> declaracao_inteiro
+%type <c> programa declaracoes declaracao 
+%type <c> declaracao_inteiro declaracao_float declaracao_string
 
 %token <c> VAR ID NUM LITERAL_STR INT FLOAT STR WRITE READ WRITELN IF THEN
 
@@ -50,13 +50,14 @@ declaracoes: declaracao declaracoes  {
 
 		sprintf($$.str + strlen($$.str), "%s", $2.str);
 	}
+
 	| %empty { $$.str[0] = '\0'; }
 ;
 
 
 declaracao: declaracao_inteiro { strcpy($$.str, $1.str); }
-	//| declaracao_float
-	//| declaracao_string
+	| declaracao_float { strcpy($$.str, $1.str); }
+	| declaracao_string { strcpy($$.str, $1.str); }
 ;
 
 
@@ -73,33 +74,35 @@ declaracao_inteiro: VAR ID ':' INT '=' NUM ';'  {
 	}
 ;
 
-/*
+
 declaracao_float: VAR ID ':' FLOAT '=' NUM ';'  {
 
-		addSymTable(&table, $2, REAL, $6);
-		makeCodeDeclaration($2, REAL, $6);
+		addSymTable(&table, $2.str, REAL, $6.str);
+		makeCodeDeclaration($$.str, $2.str, REAL, $6.str);
 	}
 
 	| VAR ID ':' FLOAT ';'  {
 
-		addSymTable(&table, $2, REAL, NULL);
-		makeCodeDeclaration($2, REAL, NULL);
+		addSymTable(&table, $2.str, REAL, NULL);
+		makeCodeDeclaration($$.str, $2.str, REAL, NULL);
 	}
 ;
 
+
 declaracao_string: VAR ID ':' STR'=' LITERAL_STR ';'  {
 
-		addSymTable(&table, $2, STRING, $6);
-		makeCodeDeclaration($2, STRING, $6);
+		addSymTable(&table, $2.str, STRING, $6.str);
+		makeCodeDeclaration($$.str, $2.str, STRING, $6.str);
 	}
 
 	| VAR ID ':' STR ';'  {
 
-		addSymTable(&table, $2, STRING, "");
-		makeCodeDeclaration($2, STRING, "");
+		addSymTable(&table, $2.str, STRING, NULL);
+		makeCodeDeclaration($$.str, $2.str, STRING, NULL);
 	}
 ;
 
+/*
 bloco : '{' comandos '}'  {
 		 $$[0] = 0;
 

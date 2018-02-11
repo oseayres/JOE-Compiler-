@@ -6,6 +6,9 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+// Tamanho de um string nao inicializada
+#define STRING_SIZE 256
+
 #define JUMPS_ARRAY_OFFSET 4
 extern char jumps[10][4];
 

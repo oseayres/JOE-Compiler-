@@ -76,6 +76,7 @@ int main(int argc, char const *argv[])
     fprintf(out_file, "fmt_dln: db \"%%ld\", 10, 0\n");
     fprintf(out_file, "fmt_fln: db \"%%f\", 10, 0\n");
     fprintf(out_file, "fmt_sln: db \"%%s\", 10, 0\n");
+    fprintf(out_file, "\n");
     
     
     
