@@ -1,0 +1,19 @@
+
+var agua: int = 14;
+var ar: int = 345;
+var terra: float = 4.12;
+var fogo: int = 9;
+var areia: string = "a neve e gelada";
+var nula: string = "";
+var gelo: float;
+var raio: string;
+{
+	writeln agua;
+	writeln areia;
+	read agua;
+	writeln areia;
+	writeln agua;
+	fogo = agua;
+	writeln fogo;
+}
+

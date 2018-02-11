@@ -22,15 +22,6 @@ void makeLabel(char* out_label)
 }
 
 
-// Termino da secao de dados e comeco da secao de codigo
-void dumpCodeDeclarationEnd()
-{
-    fprintf(out_file, "\nsection .text\n");
-    fprintf(out_file, "global main\n");
-    fprintf(out_file, "\nmain:\n");
-}
-
-
 // Codigo para declaracao de variaveis
 void makeCodeDeclaration(char* dest, char* identifier, Type type, char* value)
 {
@@ -71,11 +62,19 @@ void makeCodeDeclaration(char* dest, char* identifier, Type type, char* value)
 }
 
 
+// Termino da secao de dados e comeco da secao de codigo
+void dumpCodeDeclarationEnd()
+{
+    fprintf(out_file, "\nsection .text\n");
+    fprintf(out_file, "global main\n");
+    fprintf(out_file, "\nmain:\n");
+}
+
+
 // Codigo para leitura (scanf)
 void makeCodeRead(char* dest, char *id)
 {
-    SymTableEntry* ret;
-    ret = findSymTable(&table,id);
+    SymTableEntry* ret = findSymTable(&table,id);
     
     dest[0] = '\0';
 
@@ -113,8 +112,7 @@ void makeCodeRead(char* dest, char *id)
 // Codigo para escrita (printf)
 void makeCodeWrite(char* dest, char *id, int ln)
 {
-    SymTableEntry* ret;
-    ret = findSymTable(&table,id);
+    SymTableEntry* ret = findSymTable(&table,id);
     
     dest[0] = '\0';
 
@@ -152,67 +150,112 @@ void makeCodeWrite(char* dest, char *id, int ln)
 
 
 
-void makeCodeAssignment(char *value, char *valueReal)
+void makeCodeAssignment(char* dest, char* id, char* expr)
 {   
-    SymTableEntry *ret;
-    ret = findSymTable(&table,value);
+    SymTableEntry* ret = findSymTable(&table, id);
+    dest[0] = '\0';
 
-    if(ret == NULL)
+    if (ret == NULL)
     {
-        // not found in table
-    }else
-    {
-        if(ret->type == INTEGER)
-        {
-            fprintf(out_file, "pop rbx\n");
-            // fprintf(out_file, "mov rbx, %s\n",valueReal);
-            fprintf(out_file, "mov [%s],rbx\n", ret->identifier);
-
-
-        }
-        else
-        {
-            printf("SOU um compilador burro e nao sei somar float ou string\n");
-        }
-
+        fprintf(stderr, "Error: %s not recognized\n", id);
+        return;
     }
 
+ 
+    if (ret->type == INTEGER)
+    {
+        sprintf(dest + strlen(dest), "%s", expr);
+        sprintf(dest + strlen(dest), "pop rbx\n");
+        sprintf(dest + strlen(dest), "mov [%s],rbx\n", ret->identifier);
+    }
+
+    else
+    {
+        fprintf(stderr, "Unsuported operation envolving string or float\n");
+    }
+
+
 }
 
 
 
 
 
-void makeCodeStack(char *id)
+int makeCodeLoad(char* dest, char* id, int ref)
 {
-    fprintf(out_file, "mov rax,%s\n",id );
-    fprintf(out_file, "push rax\n");
+    dest[0] = '\0';
+
+    if (ref == 0)
+    {
+        sprintf(dest + strlen(dest), "mov rbx,%s\n", id);
+        sprintf(dest + strlen(dest), "push rbx\n");
+        return 1;
+    }
+
+    SymTableEntry* ret = findSymTable(&table, id);
+
+    if (ret == NULL)
+    {
+        fprintf(stderr, "Error: %s not recognized\n", id);
+        return 0;
+    }
+
+    if (ret->type == INTEGER || ret->type == REAL)
+        sprintf(dest + strlen(dest), "mov rbx,[%s]\n", ret->identifier);
+    else
+        sprintf(dest + strlen(dest), "mov rbx,%s\n", ret->identifier);
+    
+    sprintf(dest + strlen(dest), "push rbx\n");
+    return 1;
 }
 
-void makeCodeAdd()
+
+void makeCodeAdd(char* dest, char* value)
 {
-    fprintf(out_file, "pop rax\n");
-    fprintf(out_file, "pop rbx\n");
-    fprintf(out_file, "add rbx,rax\n");
-    fprintf(out_file, "push rbx\n");
+    sprintf(dest + strlen(dest), "%s", value);
+    sprintf(dest + strlen(dest), "pop rcx\n");
+    sprintf(dest + strlen(dest), "pop rbx\n");
+    sprintf(dest + strlen(dest), "add rbx,rcx\n");
+    sprintf(dest + strlen(dest), "push rbx\n");
 }
 
-void makeCodeSub()
+
+void makeCodeSub(char* dest, char* value)
 {   
-    fprintf(out_file, "pop rax\n");
-    fprintf(out_file, "pop rbx\n");
-    fprintf(out_file, "sub rbx,rax\n");
-    fprintf(out_file, "push rbx\n");
+    sprintf(dest + strlen(dest), "%s", value);
+    sprintf(dest + strlen(dest), "pop rcx\n");
+    sprintf(dest + strlen(dest), "pop rbx\n");
+    sprintf(dest + strlen(dest), "sub rbx,rcx\n");
+    sprintf(dest + strlen(dest), "push rbx\n");
 
 }
 
-void makeCodeMul()
+void makeCodeMul(char* dest, char* value2)
 {
-    fprintf(out_file, "pop rax\n");
-    fprintf(out_file, "pop rbx\n");
-    fprintf(out_file, "imul rbx,rax\n");
-    fprintf(out_file, "push rbx\n");
+    sprintf(dest + strlen(dest), "%s", value2);
+    sprintf(dest + strlen(dest), "pop rcx\npop rbx\nimul rbx,rcx\npush rbx\n");
+}
 
+
+void makeCodeDiv(char* dest, char* value2)
+{
+    sprintf(dest + strlen(dest), "%s", value2);
+    sprintf(dest + strlen(dest), "pop r8\n");
+    sprintf(dest + strlen(dest), "pop rax\n");
+    sprintf(dest + strlen(dest), "xor rdx,rdx\n");
+    sprintf(dest + strlen(dest), "idiv r8\n");
+    sprintf(dest + strlen(dest), "push rax\n");
+}
+
+
+void makeCodeMod(char* dest, char* value2)
+{
+    sprintf(dest + strlen(dest), "%s", value2);
+    sprintf(dest + strlen(dest), "pop r8\n");
+    sprintf(dest + strlen(dest), "pop rax\n");
+    sprintf(dest + strlen(dest), "xor rdx,rdx\n");
+    sprintf(dest + strlen(dest), "idiv r8\n");
+    sprintf(dest + strlen(dest), "push rdx\n");
 }
 
 

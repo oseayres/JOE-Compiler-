@@ -25,7 +25,7 @@ contexts:
     # other.
     - match: '\b(if|else|for|while)\b'
       scope: keyword.control.example-c
-    - match: '\b(var|write)\b'
+    - match: '\b(var|write|read|writeln)\b'
       scope: keyword.operator.word.example-c
     - match: '\b(float|string|int)\b'
       scope: variable.other.example-c

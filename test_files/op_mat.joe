@@ -1,0 +1,16 @@
+
+var ar: int = 3;
+var menos: int;
+var dois: int;
+var raio: int;
+{
+	//menos = 100;
+	raio = 5;
+	dois = 2;
+	menos = 1;
+	ar = 2 * (menos - dois * (ar + menos + 27 / (45 / 5)));
+	//ar = raio * (menos - dois * (ar + menos + ar));
+	//raio = ar + raio + 10 - 50 + 22 - menos + 2;
+	writeln ar;
+}
+

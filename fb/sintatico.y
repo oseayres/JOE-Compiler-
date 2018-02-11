@@ -29,7 +29,8 @@
 
 %type <c> programa declaracoes declaracao bloco
 %type <c> declaracao_inteiro declaracao_float declaracao_string
-%type <c> comandos comando comando_escrita comando_leitura
+%type <c> comandos comando comando_escrita comando_leitura comando_atribuicao
+%type <c> expressao_numerica termo fator
 
 %token <c> VAR ID NUM LITERAL_STR INT FLOAT STR WRITE READ WRITELN IF THEN
 
@@ -123,6 +124,7 @@ comandos : comando comandos  {
 
 comando: comando_escrita      { strcpy($$.str, $1.str); }
 	| comando_leitura         { strcpy($$.str, $1.str); }
+	| comando_atribuicao      { strcpy($$.str, $1.str); }
 ;
 
 
@@ -137,6 +139,7 @@ comando_escrita: WRITE ID ';'  {
 
 		makeCodeWrite($$.str, $2.str, 0);
 	}
+
 	| WRITELN ID ';'  {
 
 		makeCodeWrite($$.str, $2.str, 1);
@@ -144,12 +147,9 @@ comando_escrita: WRITE ID ';'  {
 ;
 
 
-
-/*
 comando_atribuicao: ID '=' expressao_numerica ';' {
-		// printf("Expressao booleana\n");
-		makeCodeAssignment($1, $3);
 		
+		makeCodeAssignment($$.str, $1.str, $3.str);
 	}
 	// | ID '=' expressao_booleana ';' {
 	// 	// printf("Expressao booleana\n");
@@ -159,18 +159,34 @@ comando_atribuicao: ID '=' expressao_numerica ';' {
 ;
 
 
-expressao_numerica: termo{
-		strcpy($$,$1);
-	}
-	| expressao_numerica '+' expressao_numerica {
+expressao_numerica: termo  {
 
-		makeCodeAdd();
+		strcpy($$.str, $1.str);
 	}
-	| expressao_numerica '-' expressao_numerica {
-		makeCodeSub();
+
+	| expressao_numerica '+' expressao_numerica  {
+
+		makeCodeAdd($$.str, $3.str);
 	}
-	| termo '*' fator {
-		makeCodeMul();
+
+	| expressao_numerica '-' expressao_numerica  {
+		
+		makeCodeSub($$.str, $3.str);
+	}
+
+	| termo '*' fator  {
+		
+		makeCodeMul($$.str, $3.str);
+	}
+
+	| termo '/' fator  {
+
+		makeCodeDiv($$.str, $3.str);
+	}
+
+	| termo '%' fator  {
+
+		makeCodeMod($$.str, $3.str);
 	}
 
 
@@ -178,33 +194,39 @@ expressao_numerica: termo{
 
 
 
-termo: NUM {
+termo: NUM  {
 
-		strcpy($$,$1);
-		makeCodeStack($$);
+		makeCodeLoad($$.str, $1.str, 0);
 	}
-	| ID {
-		strcpy($$,$1);
-		makeCodeStack($$);	
+
+	| ID  {
+
+		makeCodeLoad($$.str, $1.str, 1);
 	}
 ;
 
-fator: NUM {
-		strcpy($$,$1);
-		makeCodeStack($$);
+
+fator: NUM  {
+		
+		makeCodeLoad($$.str, $1.str, 0);
 	}
-	| ID {
-		strcpy($$,$1);
+
+	| ID  {
+
+		makeCodeLoad($$.str, $1.str, 1);
 	}
+	
 	| '(' expressao_numerica ')'{
-		// printf("expressao numerica\n");
-		strcpy($$,$2);
+		strcpy($$.str, $2.str);
+		// $$.str[0] = '\0';
+		// printf("(e): {%s}\n", $$.str);
+		// printf("parentesis\n");
 	}
 ;
 
 
 
-
+/*
 comando_se: IF '(' expressao_booleana ')' THEN  {
 		strcpy($$,$1);
 		makeCodeIf(NULL, $3.str, $3.op, NULL);
