@@ -6,7 +6,7 @@
 #include <symbolTable.h>
 #include <codeGeneration.h>
 
-
+// Labels para os jumps
 void makeLabel(char* out_label)
 {
     static int label_count = 0;
@@ -22,7 +22,8 @@ void makeLabel(char* out_label)
 }
 
 
-void dumpDeclarationEndCode()
+// Termino da secao de dados e comeco da secao de codigo
+void dumpCodeDeclarationEnd()
 {
     fprintf(out_file, "\nsection .text\n");
     fprintf(out_file, "global main\n");
@@ -30,6 +31,7 @@ void dumpDeclarationEndCode()
 }
 
 
+// Codigo para declaracao de variaveis
 void makeCodeDeclaration(char* dest, char* identifier, Type type, char* value)
 {
     if (type == INTEGER)
@@ -69,6 +71,87 @@ void makeCodeDeclaration(char* dest, char* identifier, Type type, char* value)
 }
 
 
+// Codigo para leitura (scanf)
+void makeCodeRead(char* dest, char *id)
+{
+    SymTableEntry* ret;
+    ret = findSymTable(&table,id);
+    
+    dest[0] = '\0';
+
+    if (ret == NULL)
+    {
+        fprintf(stderr, "Error: %s not recognized\n", id);
+        return;
+    }
+
+    if (ret->type == INTEGER)
+    {
+        sprintf(dest + strlen(dest), "mov rdi,fmt_d\n");
+        sprintf(dest + strlen(dest), "mov rsi,%s\n", ret->identifier);
+    }
+
+    else if (ret->type == REAL)
+    {
+        sprintf(dest + strlen(dest), "mov rdi,fmt_f\n");
+        sprintf(dest + strlen(dest), "mov rsi,%s\n", ret->identifier);
+    }
+
+    else
+    {
+        sprintf(dest + strlen(dest), "mov rdi,fmt_s\n");
+        sprintf(dest + strlen(dest), "mov rsi,%s\n", ret->identifier);
+    }
+
+   
+    sprintf(dest + strlen(dest), "mov rax,0\n");
+    sprintf(dest + strlen(dest), "call scanf\n");
+
+}
+
+
+// Codigo para escrita (printf)
+void makeCodeWrite(char* dest, char *id, int ln)
+{
+    SymTableEntry* ret;
+    ret = findSymTable(&table,id);
+    
+    dest[0] = '\0';
+
+    if (ret == NULL)
+    {
+        fprintf(stderr, "Error: %s not recognized\n", id);
+        return;
+    }
+
+    if (ret->type == INTEGER)
+    {
+        if (ln) sprintf(dest + strlen(dest), "mov rdi,fmt_dln\n");
+        else sprintf(dest + strlen(dest), "mov rdi,fmt_d\n");
+        sprintf(dest + strlen(dest), "mov rsi,[%s]\n", ret->identifier);
+    }
+
+    else if (ret->type == REAL)
+    {
+        if (ln) sprintf(dest + strlen(dest), "mov rdi,fmt_fln\n");
+        else sprintf(dest + strlen(dest), "mov rdi,fmt_f\n");
+        sprintf(dest + strlen(dest), "mov rsi,[%s]\n", ret->identifier);
+    }
+
+    else
+    {
+        if (ln) sprintf(dest + strlen(dest), "mov rdi,fmt_sln\n");
+        else sprintf(dest + strlen(dest), "mov rdi,fmt_s\n");
+        sprintf(dest + strlen(dest), "mov rsi,%s\n", ret->identifier);
+    }
+
+    sprintf(dest + strlen(dest), "mov rax,0\n");
+    sprintf(dest + strlen(dest), "call printf\n");
+
+}
+
+
+
 void makeCodeAssignment(char *value, char *valueReal)
 {   
     SymTableEntry *ret;
@@ -83,7 +166,7 @@ void makeCodeAssignment(char *value, char *valueReal)
         {
             fprintf(out_file, "pop rbx\n");
             // fprintf(out_file, "mov rbx, %s\n",valueReal);
-            fprintf(out_file, "mov [%s], rbx\n", ret->identifier);
+            fprintf(out_file, "mov [%s],rbx\n", ret->identifier);
 
 
         }
@@ -97,103 +180,7 @@ void makeCodeAssignment(char *value, char *valueReal)
 }
 
 
-void makeCodeWrite(char *id)
-{
-    SymTableEntry *ret;
-    ret = findSymTable(&table,id);
 
-    if(ret == NULL)
-    {
-
-    }else
-    {
-        if(ret->type == INTEGER)
-        {
-            fprintf(out_file, "mov rdi, fmt_d\n");
-            fprintf(out_file, "mov rsi, [%s]\n", ret->identifier);
-        }else if(ret->type == REAL)
-        {
-            fprintf(out_file, "mov rdi, fmt_f\n");
-            fprintf(out_file, "mov rsi, [%s]\n", ret->identifier);
-        }else
-        {
-            fprintf(out_file, "mov rdi, fmt_s\n");
-             fprintf(out_file, "mov rsi, %s\n", ret->identifier);
-        }
-
-       
-        fprintf(out_file, "mov rax, 0\n");
-        fprintf(out_file, "call printf\n");
-
-    }
-
-}
-
-
-void makeCodeRead(char *id)
-{
-    SymTableEntry *ret;
-    ret = findSymTable(&table,id);
-
-
-    if(ret == NULL)
-    {
-
-    }
-    else
-    {
-        if(ret->type == INTEGER){
-            fprintf(out_file, "mov rdi, fmt_d\n");
-            fprintf(out_file, "mov rsi, %s\n", ret->identifier);
-        }else if(ret->type == REAL)
-        {
-            fprintf(out_file, "mov rdi, fmt_f\n");
-            fprintf(out_file, "mov rsi, %s\n", ret->identifier);
-        }else
-        {
-            fprintf(out_file, "mov rdi, fmt_s\n");
-             fprintf(out_file, "mov rsi, %s\n", ret->identifier);
-        }
-
-       
-        fprintf(out_file, "mov rax, 0\n");
-        fprintf(out_file, "call scanf\n");
-
-    }
-
-}
-
-void makeCodeWriteln(char *id)
-{
-    SymTableEntry *ret;
-    ret = findSymTable(&table,id);
-
-    if(ret == NULL)
-    {
-
-    }else
-    {
-        if(ret->type == INTEGER)
-        {
-            fprintf(out_file, "mov rdi, fmt_dln\n");
-            fprintf(out_file, "mov rsi, [%s]\n", ret->identifier);
-        }else if(ret->type == REAL)
-        {
-            fprintf(out_file, "mov rdi, fmt_fln\n");
-            fprintf(out_file, "mov rsi, [%s]\n", ret->identifier);
-        }else
-        {
-            fprintf(out_file, "mov rdi, fmt_sln\n");
-             fprintf(out_file, "mov rsi, %s\n", ret->identifier);
-        }
-
-       
-        fprintf(out_file, "mov rax, 0\n");
-        fprintf(out_file, "call printf\n");
-
-    }
-
-}
 
 
 void makeCodeStack(char *id)

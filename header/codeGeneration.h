@@ -16,12 +16,13 @@ extern char jumps[10][4];
 extern FILE* out_file;
 
 void makeLabel(char* out_label);
-void dumpDeclarationEndCode();
+void dumpCodeDeclarationEnd();
+void makeCodeWrite(char* dest, char *id, int ln);
+void makeCodeRead(char* dest, char *id);
+
 void makeCodeDeclaration(char* dest, char* identifier, Type type, char* value);
-void makeCodeWrite(char *id);
-void makeCodeRead(char *id);
-void makeCodeWriteln(char *id);
-void makeCodeReadln(char *id);
+
+
 void makeCodeAssignment(char *value, char *valueReal);
 void makeCodeStack(char *id);
 void makeCodeAdd();	
