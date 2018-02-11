@@ -200,10 +200,10 @@ int makeCodeLoad(char* dest, char* id, int ref)
         return 0;
     }
 
-    if (ret->type == INTEGER || ret->type == REAL)
-        sprintf(dest + strlen(dest), "mov rbx,[%s]\n", ret->identifier);
-    else
+    if (ret->type == STRING)
         sprintf(dest + strlen(dest), "mov rbx,%s\n", ret->identifier);
+    else
+        sprintf(dest + strlen(dest), "mov rbx,[%s]\n", ret->identifier);
     
     sprintf(dest + strlen(dest), "push rbx\n");
     return 1;
@@ -259,45 +259,41 @@ void makeCodeMod(char* dest, char* value2)
 }
 
 
-void makeCodeComp(char* dest, char* id, char* id2)
+int makeCodeComp(char* dest, char* id, char* expr)
 {
-    SymTableEntry *ret;
-    SymTableEntry *ret2;
-    ret = findSymTable(&table,id);
-    ret2 = findSymTable(&table,id2);
+    SymTableEntry* ret = findSymTable(&table, id);
+    dest[0] = '\0';
 
-    if(ret == NULL || ret2 == NULL)
+    if (ret == NULL)
     {
-
-    }else
-    {
-        sprintf(dest, "mov rbx, [%s]\n", ret->identifier);
-        sprintf(dest + strlen(dest), "mov rax, [%s]\n", ret2->identifier);
-        sprintf(dest + strlen(dest), "cmp rbx, rax\n");
-
-
-        // fprintf(out_file, "mov rbx,[%s]\n",ret->identifier);
-        // fprintf(out_file, "mov rax,[%s]\n",ret2->identifier);
-        // fprintf(out_file, "cmp rbx,rax\n");
+        fprintf(stderr, "Error: %s not recognized\n", id);
+        return 0;
     }
+
+    if (ret->type != INTEGER)
+    {
+        fprintf(stderr, "Unsuported operation envolving string or float\n");
+        return 0;
+    }
+
+    sprintf(dest + strlen(dest), "%s", expr);
+    sprintf(dest + strlen(dest), "pop rcx\n");
+    sprintf(dest + strlen(dest), "mov rbx, [%s]\n", ret->identifier);
+    sprintf(dest + strlen(dest), "cmp rbx, rcx\n");
+
+    return 1;
 }
+
 
 void makeCodeIf(char* dest, char* expr_code, int expr_jump, char* block_code)
 {
     char label[16];
     makeLabel(label);
 
-    if (dest == NULL)
-    {
-        fprintf(out_file, "%s\n", expr_code);
-        fprintf(out_file, "%s %s\n", jumps[expr_jump + JUMPS_ARRAY_OFFSET],
-            label);
+    dest[0] = '\0';
 
-        // Fazendo o cadigo de uma atribuição
-        fprintf(out_file, "mov rbx, 1234\n");
-        fprintf(out_file, "mov [jesus], rbx\n");
-
-
-        fprintf(out_file, "%s:\n", label);
-    }
+    sprintf(dest + strlen(dest), "%s", expr_code);
+    sprintf(dest + strlen(dest), "%s %s\n", jumps[expr_jump + JUMPS_ARRAY_OFFSET], label);
+    sprintf(dest + strlen(dest), "%s", block_code);
+    sprintf(dest + strlen(dest), "%s:\n", label);
 }

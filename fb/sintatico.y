@@ -31,8 +31,11 @@
 %type <c> declaracao_inteiro declaracao_float declaracao_string
 %type <c> comandos comando comando_escrita comando_leitura comando_atribuicao
 %type <c> expressao_numerica termo fator
+%type <c> expressao_booleana operador_relacional
+%type <c> comando_se
 
 %token <c> VAR ID NUM LITERAL_STR INT FLOAT STR WRITE READ WRITELN IF THEN
+%token <c> LE GE EQ NE
 
 %left '+' '-'
 %left '*' '/'
@@ -125,6 +128,7 @@ comandos : comando comandos  {
 comando: comando_escrita      { strcpy($$.str, $1.str); }
 	| comando_leitura         { strcpy($$.str, $1.str); }
 	| comando_atribuicao      { strcpy($$.str, $1.str); }
+	| comando_se      { strcpy($$.str, $1.str); }
 ;
 
 
@@ -226,39 +230,33 @@ fator: NUM  {
 
 
 
-/*
-comando_se: IF '(' expressao_booleana ')' THEN  {
-		strcpy($$,$1);
-		makeCodeIf(NULL, $3.str, $3.op, NULL);
-		printf("\n[\n%s\n]\n\n", $3.str);
+
+comando_se: IF '(' expressao_booleana ')' THEN bloco  {
+		// strcpy($$,$1);
+		makeCodeIf($$.str, $3.str, $3.op, $6.str);
+		// printf("\n[\n%s\n]\n\n", $3.str);
 	}
 ;
 
 
 
 
-expressao_booleana: ID operador_relacional ID {
+expressao_booleana: ID operador_relacional expressao_numerica  {
 		
 		$$.op = $2.op;
-		makeCodeComp($$.str, $1, $3);
-
+		makeCodeComp($$.str, $1.str, $3.str);
 	}
 ;
 
-operador_relacional: '<'  {
-		
-		$$.str[0] = '\0';
-		$$.op = -4;
-	}
-
-	| '>'  {
-		$$.str[0] = '\0';
-		$$.op = -3;
-	}
+operador_relacional: '<'   { $$.op = -4; }
+	| '>'                  { $$.op = -3; }
+	| LE                   { $$.op = 3; }
+	| GE                   { $$.op = 4; }
+	| EQ                   { $$.op = -2; }
+	| NE                   { $$.op = 2; }
 ;
 
 
-*/
 
 
 %%

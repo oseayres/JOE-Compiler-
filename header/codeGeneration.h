@@ -32,7 +32,7 @@ void makeCodeMul(char* dest, char* value2);
 void makeCodeDiv(char* dest, char* value2);
 void makeCodeMod(char* dest, char* value2);
 
-void makeCodeComp(char* dest, char* id, char* id2);
+int makeCodeComp(char* dest, char* id, char* expr);
 void makeCodeIf(char* dest, char* expr_code, int expr_jump, char* block_code);
 
 #endif

@@ -66,6 +66,27 @@ text_str [^'\"']
 }
 
 
+"<="  {
+	yylval.c.str[0] = '\0';
+	return LE;
+}
+
+">="  {
+	yylval.c.str[0] = '\0';
+	return GE;
+}
+
+"=="  {
+	yylval.c.str[0] = '\0';
+	return EQ;
+}
+
+"!="  {
+	yylval.c.str[0] = '\0';
+	return NE;
+}
+
+
 {digit}+  {
 	strcpy(yylval.c.str, yytext);
 	return NUM;
