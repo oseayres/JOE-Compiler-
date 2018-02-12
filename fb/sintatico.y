@@ -38,7 +38,7 @@
 %token <c> LE GE EQ NE
 
 %left '+' '-'
-%left '*' '/'
+
 
 %%
 
