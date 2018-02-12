@@ -1,0 +1,31 @@
+
+var ar: int = 17;
+var in: string = "inside first if";
+var in2: string = "inside second if";
+var in3: string = "inside first while";
+var inp: string = "enter a value: ";
+var raio: int = 17;
+{
+	if (ar != raio) then
+	{
+		ar = ar / 2;
+		while (ar >= 0) do
+		{
+			ar = ar - 1;
+		}
+		writeln ar;
+	}
+
+	else
+	{
+		ar = ar * 2;
+		while (ar < 100) do
+		{
+			ar = ar * 2;
+		}
+		writeln ar;
+	}
+
+	//writeln ar;
+}
+

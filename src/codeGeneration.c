@@ -17,8 +17,6 @@ void makeLabel(char* out_label)
     strcat(out_label, s);
 
     label_count++;
-
-    printf("Label gerado: {%s}\n", out_label);
 }
 
 
@@ -300,6 +298,29 @@ void makeCodeIf(char* dest, char* expr_code, int expr_jump, char* block_code)
 }
 
 
+void makeCodeIfElse(char* dest, char* expr_code, int expr_jump,
+    char* block_code_if, char* block_code_else)
+{
+    char else_label[16];
+    char final_label[16];
+
+    makeLabel(else_label);
+    makeLabel(final_label);
+
+    dest[0] = '\0';
+
+    
+    sprintf(dest + strlen(dest), "%s", expr_code);
+    sprintf(dest + strlen(dest), "%s %s\n", jumps[expr_jump + JUMPS_ARRAY_OFFSET],
+        else_label);
+    sprintf(dest + strlen(dest), "%s", block_code_if);
+    sprintf(dest + strlen(dest), "jmp %s\n", final_label);
+    sprintf(dest + strlen(dest), "%s:\n", else_label);
+    sprintf(dest + strlen(dest), "%s", block_code_else);
+    sprintf(dest + strlen(dest), "%s:\n", final_label);
+}
+
+
 void makeCodeWhile(char* dest, char* expr_code, int expr_jump, char* block_code)
 {
     char loop_label[16];
@@ -319,3 +340,4 @@ void makeCodeWhile(char* dest, char* expr_code, int expr_jump, char* block_code)
     sprintf(dest + strlen(dest), "jmp %s\n", loop_label);
     sprintf(dest + strlen(dest), "%s:\n", final_label);
 }
+

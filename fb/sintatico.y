@@ -17,7 +17,7 @@
     int integer;
 	struct code_t
 	{
-		char str[1024];
+		char str[2044];
 		int op;
 	} c;
     // char str[256];
@@ -32,7 +32,7 @@
 %type <c> comandos comando comando_escrita comando_leitura comando_atribuicao
 %type <c> expressao_numerica termo fator
 %type <c> expressao_booleana operador_relacional
-%type <c> comando_se comando_enquanto
+%type <c> comando_se comando_se_senao comando_enquanto
 
 %token <c> VAR ID NUM LITERAL_STR INT FLOAT STR WRITE READ WRITELN IF THEN ELSE WHILE DO
 %token <c> LE GE EQ NE
@@ -129,6 +129,7 @@ comando: comando_escrita      { strcpy($$.str, $1.str); }
 	| comando_leitura         { strcpy($$.str, $1.str); }
 	| comando_atribuicao      { strcpy($$.str, $1.str); }
 	| comando_se              { strcpy($$.str, $1.str); }
+	| comando_se_senao        { strcpy($$.str, $1.str); }
 	| comando_enquanto        { strcpy($$.str, $1.str); }
 ;
 
@@ -216,11 +217,9 @@ fator: NUM  {
 		makeCodeLoad($$.str, $1.str, 1);
 	}
 	
-	| '(' expressao_numerica ')'{
+	| '(' expressao_numerica ')'  {
+		
 		strcpy($$.str, $2.str);
-		// $$.str[0] = '\0';
-		// printf("(e): {%s}\n", $$.str);
-		// printf("parentesis\n");
 	}
 ;
 
@@ -230,6 +229,13 @@ fator: NUM  {
 comando_se: IF '(' expressao_booleana ')' THEN bloco  {
 		
 		makeCodeIf($$.str, $3.str, $3.op, $6.str);
+	}
+;
+
+
+comando_se_senao: IF '(' expressao_booleana ')' THEN bloco ELSE bloco  {
+
+		makeCodeIfElse($$.str, $3.str, $3.op, $6.str, $8.str);
 	}
 ;
 
