@@ -44,6 +44,12 @@ text_str [^'\"']
 
 }
 
+"do" {
+	strcpy(yylval.c.str, yytext);
+	return DO;
+}
+
+
 "read" {
 	strcpy(yylval.c.str,yytext);
 	return READ;
@@ -63,6 +69,16 @@ text_str [^'\"']
 "then" {
 	strcpy(yylval.c.str, yytext);
 	return THEN;
+}
+
+"else" {
+	strcpy(yylval.c.str, yytext);
+	return ELSE;
+}
+
+"while" {
+	strcpy(yylval.c.str, yytext);
+	return WHILE;
 }
 
 

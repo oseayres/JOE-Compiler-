@@ -293,7 +293,29 @@ void makeCodeIf(char* dest, char* expr_code, int expr_jump, char* block_code)
     dest[0] = '\0';
 
     sprintf(dest + strlen(dest), "%s", expr_code);
-    sprintf(dest + strlen(dest), "%s %s\n", jumps[expr_jump + JUMPS_ARRAY_OFFSET], label);
+    sprintf(dest + strlen(dest), "%s %s\n", jumps[expr_jump + JUMPS_ARRAY_OFFSET],
+        label);
     sprintf(dest + strlen(dest), "%s", block_code);
     sprintf(dest + strlen(dest), "%s:\n", label);
+}
+
+
+void makeCodeWhile(char* dest, char* expr_code, int expr_jump, char* block_code)
+{
+    char loop_label[16];
+    char final_label[16];
+
+    makeLabel(loop_label);
+    makeLabel(final_label);
+
+    dest[0] = '\0';
+
+    
+    sprintf(dest + strlen(dest), "%s:\n", loop_label);
+    sprintf(dest + strlen(dest), "%s", expr_code);
+    sprintf(dest + strlen(dest), "%s %s\n", jumps[expr_jump + JUMPS_ARRAY_OFFSET],
+        final_label);
+    sprintf(dest + strlen(dest), "%s", block_code);
+    sprintf(dest + strlen(dest), "jmp %s\n", loop_label);
+    sprintf(dest + strlen(dest), "%s:\n", final_label);
 }

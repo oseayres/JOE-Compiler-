@@ -34,6 +34,9 @@ void makeCodeMod(char* dest, char* value2);
 
 int makeCodeComp(char* dest, char* id, char* expr);
 void makeCodeIf(char* dest, char* expr_code, int expr_jump, char* block_code);
+void makeCodeWhile(char* dest, char* expr_code, int expr_jump, char* block_code);
+
+
 
 #endif
 

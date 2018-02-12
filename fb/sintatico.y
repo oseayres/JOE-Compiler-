@@ -32,9 +32,9 @@
 %type <c> comandos comando comando_escrita comando_leitura comando_atribuicao
 %type <c> expressao_numerica termo fator
 %type <c> expressao_booleana operador_relacional
-%type <c> comando_se
+%type <c> comando_se comando_enquanto
 
-%token <c> VAR ID NUM LITERAL_STR INT FLOAT STR WRITE READ WRITELN IF THEN
+%token <c> VAR ID NUM LITERAL_STR INT FLOAT STR WRITE READ WRITELN IF THEN ELSE WHILE DO
 %token <c> LE GE EQ NE
 
 %left '+' '-'
@@ -128,7 +128,8 @@ comandos : comando comandos  {
 comando: comando_escrita      { strcpy($$.str, $1.str); }
 	| comando_leitura         { strcpy($$.str, $1.str); }
 	| comando_atribuicao      { strcpy($$.str, $1.str); }
-	| comando_se      { strcpy($$.str, $1.str); }
+	| comando_se              { strcpy($$.str, $1.str); }
+	| comando_enquanto        { strcpy($$.str, $1.str); }
 ;
 
 
@@ -151,15 +152,10 @@ comando_escrita: WRITE ID ';'  {
 ;
 
 
-comando_atribuicao: ID '=' expressao_numerica ';' {
+comando_atribuicao: ID '=' expressao_numerica ';'  {
 		
 		makeCodeAssignment($$.str, $1.str, $3.str);
 	}
-	// | ID '=' expressao_booleana ';' {
-	// 	// printf("Expressao booleana\n");
-	// 	makeCodeAssignment($1, $3);
-		
-	// }
 ;
 
 
@@ -232,13 +228,17 @@ fator: NUM  {
 
 
 comando_se: IF '(' expressao_booleana ')' THEN bloco  {
-		// strcpy($$,$1);
+		
 		makeCodeIf($$.str, $3.str, $3.op, $6.str);
-		// printf("\n[\n%s\n]\n\n", $3.str);
 	}
 ;
 
 
+comando_enquanto: WHILE '(' expressao_booleana ')' DO bloco  {
+
+		makeCodeWhile($$.str, $3.str, $3.op, $6.str);
+	}
+;
 
 
 expressao_booleana: ID operador_relacional expressao_numerica  {
