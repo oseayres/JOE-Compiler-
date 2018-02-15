@@ -24,3 +24,9 @@ Para executar os 3 comandos anteriores de uma vez só:
 $ python3 make.py --all arquivo_entrada.txt
 ```
 
+
+Para limpar os arquivos gerados (inclusive o executavel):
+```sh
+$ python3 make.py --clean
+```
+

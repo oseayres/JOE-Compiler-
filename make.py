@@ -86,6 +86,38 @@ def run_joe(input_file):
 
 
 
+def clean():
+
+	command = "rm -r *.o"
+	os.system(command)
+
+	command = "rm asm_bin/*"
+	os.system(command)
+
+	command = "rm fb/*.c"
+	os.system(command)
+
+	command = "rm fb/*.h"
+	os.system(command)
+
+	command = "rm *.asm"
+	os.system(command)
+
+	command = "rm joec"
+	os.system(command)
+
+	files = ["go", "test", "teste"]
+	for file in files:
+		try:
+			os.remove(file)
+		except FileNotFoundError:
+			continue
+
+
+
+
+
+
 ls = [x for x in os.scandir()]
 names = [x.name for x in ls]
 path = os.getcwd()
@@ -114,7 +146,11 @@ try:
 		compille_assembly(base + ".asm")
 
 
+	elif (sys.argv[1] == "--clean"):
+		clean()
 
+	else:
+		raise IndexError		
 
 except IndexError as e:
 	print("Erro: verifique os modos de uso")
