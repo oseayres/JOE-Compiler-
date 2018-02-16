@@ -5,6 +5,7 @@
 #define SYMBOL_TABLE_H
 
 
+#define MAX_SIZE_HASH_ARRAY 20
 #define MAX_SIZE_SYMBOL 32
 
 typedef enum {INTEGER, REAL, STRING} Type;

@@ -50,7 +50,7 @@ int hashFunction(int max_size, char* key)
 int initSymTable(SymTable* table)
 {
     table->size = 0;
-    table->max_size = 10;
+    table->max_size = MAX_SIZE_HASH_ARRAY;
     
     table->array = (SymTableNode*) malloc(table->max_size * sizeof(SymTableNode));
     if (table == NULL)
