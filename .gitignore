@@ -7,4 +7,4 @@ asm_bin/*
 joec
 
 !test_files/*.joe
-
+!asm_bin/*.txt

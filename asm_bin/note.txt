@@ -1,0 +1,2 @@
+Aqui ficam os arquivos binários de teste (gerados pelo gcc a partir do
+.o feito pelo nasm).
