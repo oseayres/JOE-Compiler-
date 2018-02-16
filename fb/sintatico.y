@@ -35,6 +35,7 @@
 %token <c> LE GE EQ NE
 
 %left '+' '-'
+%left '*' '/'
 
 
 %%
@@ -149,7 +150,8 @@ comando_escrita: WRITE ID ';'  {
 
 	| WRITELN ID ';'  {
 
-		makeCodeWrite($$.str, $2.str, 1);
+		if (!makeCodeWrite($$.str, $2.str, 1))
+			YYABORT;
 	}
 ;
 
