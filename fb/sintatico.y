@@ -14,14 +14,11 @@
 %}
 
 %union {
-    int integer;
 	struct code_t
 	{
 		char str[2044]; // string para o codigo asm
 		int op; // opcoes (por exemplo nos jumps)
 	} c;
-    // char str[256];
-    double real;
 }
 
 
@@ -55,7 +52,7 @@ programa: declaracoes bloco  {
 declaracoes: declaracao declaracoes  {
 
 		strcpy($$.str, $1.str);
-		printf("{%s}\n", $2.str);
+		//printf("{%s}\n", $2.str);
 		sprintf($$.str + strlen($$.str), "%s", $2.str);
 	}
 

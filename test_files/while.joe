@@ -1,0 +1,14 @@
+
+var i: int;
+var texto: string = "ola";
+{
+	i = 0;
+	while (i < 5) do
+	{
+		i = i + 1;
+		writeln i;
+	}
+
+	writeln i;
+}
+

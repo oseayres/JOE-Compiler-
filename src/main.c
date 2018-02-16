@@ -27,6 +27,7 @@ FILE* out_file = NULL;
 
 SymTable table;
 
+                     // -4    -3    -2     -1    0     1     2    3     4      5
 char jumps[10][4] = {"jnl", "jng", "jne", "jnz", "", "jz", "je", "jg", "jl", "jmp"};
 
 int cont_lines = 1;
@@ -101,7 +102,7 @@ int main(int argc, char const *argv[])
     fprintf(out_file, "ret\n");
 
 
-    // printSymTable(&table);
+    printSymTable(&table);
 
     fclose(out_file);
     fclose(stdin);

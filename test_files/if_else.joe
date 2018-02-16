@@ -1,0 +1,14 @@
+var teste : int;
+var nome : string = "capeta";
+{
+	teste = 4;
+	//var ne: string;
+	if(teste != 18) then{
+		teste =  10;
+	}
+	else{
+		teste = 55;
+		writeln nome;
+	}
+	writeln teste;
+}

@@ -275,7 +275,8 @@ int makeCodeComp(char* dest, char* id, char* expr)
 
     if (ret->type != INTEGER)
     {
-        fprintf(stderr, "Unsuported operation envolving string or float\n");
+        fprintf(stderr, "Unsuported operation envolving string or float at line %d\n",
+            cont_lines);
         return 0;
     }
 
