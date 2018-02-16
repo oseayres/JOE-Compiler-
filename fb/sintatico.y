@@ -17,8 +17,8 @@
     int integer;
 	struct code_t
 	{
-		char str[2044];
-		int op;
+		char str[2044]; // string para o codigo asm
+		int op; // opcoes (por exemplo nos jumps)
 	} c;
     // char str[256];
     double real;
@@ -54,6 +54,8 @@ programa: declaracoes bloco  {
 
 declaracoes: declaracao declaracoes  {
 
+		strcpy($$.str, $1.str);
+		printf("{%s}\n", $2.str);
 		sprintf($$.str + strlen($$.str), "%s", $2.str);
 	}
 
@@ -136,14 +138,16 @@ comando: comando_escrita      { strcpy($$.str, $1.str); }
 
 comando_leitura: READ ID ';'  {
 		
-		makeCodeRead($$.str, $2.str);
+		if (!makeCodeRead($$.str, $2.str))
+			YYABORT;
 	}
 ;
 
 
 comando_escrita: WRITE ID ';'  {
 
-		makeCodeWrite($$.str, $2.str, 0);
+		if (!makeCodeWrite($$.str, $2.str, 0))
+			YYABORT;
 	}
 
 	| WRITELN ID ';'  {
@@ -155,7 +159,8 @@ comando_escrita: WRITE ID ';'  {
 
 comando_atribuicao: ID '=' expressao_numerica ';'  {
 		
-		makeCodeAssignment($$.str, $1.str, $3.str);
+		if (!makeCodeAssignment($$.str, $1.str, $3.str))
+			YYABORT;
 	}
 ;
 
@@ -177,7 +182,10 @@ expressao_numerica: termo  {
 
 	| termo '*' fator  {
 		
-		makeCodeMul($$.str, $3.str);
+		// printf("{%s}\n", $$.str);
+		makeCodeMul($1.str, $3.str);
+		strcpy($$.str, $1.str);
+
 	}
 
 	| termo '/' fator  {
@@ -202,7 +210,9 @@ termo: NUM  {
 
 	| ID  {
 
-		makeCodeLoad($$.str, $1.str, 1);
+		if (!makeCodeLoad($$.str, $1.str, 1))
+			YYABORT;
+
 	}
 ;
 
@@ -250,7 +260,8 @@ comando_enquanto: WHILE '(' expressao_booleana ')' DO bloco  {
 expressao_booleana: ID operador_relacional expressao_numerica  {
 		
 		$$.op = $2.op;
-		makeCodeComp($$.str, $1.str, $3.str);
+		if (!makeCodeComp($$.str, $1.str, $3.str))
+			YYABORT;
 	}
 ;
 
@@ -269,7 +280,7 @@ operador_relacional: '<'   { $$.op = -4; }
 
 void yyerror(char *s)
 {
-   fprintf(stderr, "Error: %s", s);
+   fprintf(stderr, "Error: %s at line %d", s, cont_lines);
    fprintf(stderr, "\n");
 }
 

@@ -9,7 +9,7 @@
 
 typedef enum {INTEGER, REAL, STRING} Type;
 
-
+extern int cont_lines;
 
 
 //Declaracao de tipo de dados

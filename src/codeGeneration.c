@@ -70,7 +70,7 @@ void dumpCodeDeclarationEnd()
 
 
 // Codigo para leitura (scanf)
-void makeCodeRead(char* dest, char *id)
+int makeCodeRead(char* dest, char *id)
 {
     SymTableEntry* ret = findSymTable(&table,id);
     
@@ -78,8 +78,8 @@ void makeCodeRead(char* dest, char *id)
 
     if (ret == NULL)
     {
-        fprintf(stderr, "Error: %s not recognized\n", id);
-        return;
+        fprintf(stderr, "Error: %s not recognized at line %d\n", id, cont_lines);
+        return 0;
     }
 
     if (ret->type == INTEGER)
@@ -104,11 +104,13 @@ void makeCodeRead(char* dest, char *id)
     sprintf(dest + strlen(dest), "mov rax,0\n");
     sprintf(dest + strlen(dest), "call scanf\n");
 
+    return 1;
+
 }
 
 
 // Codigo para escrita (printf)
-void makeCodeWrite(char* dest, char *id, int ln)
+int makeCodeWrite(char* dest, char *id, int ln)
 {
     SymTableEntry* ret = findSymTable(&table,id);
     
@@ -116,8 +118,8 @@ void makeCodeWrite(char* dest, char *id, int ln)
 
     if (ret == NULL)
     {
-        fprintf(stderr, "Error: %s not recognized\n", id);
-        return;
+        fprintf(stderr, "Error: %s not recognized at line %d\n", id, cont_lines);
+        return 0;
     }
 
     if (ret->type == INTEGER)
@@ -144,19 +146,20 @@ void makeCodeWrite(char* dest, char *id, int ln)
     sprintf(dest + strlen(dest), "mov rax,0\n");
     sprintf(dest + strlen(dest), "call printf\n");
 
+    return 1;
 }
 
 
 
-void makeCodeAssignment(char* dest, char* id, char* expr)
+int makeCodeAssignment(char* dest, char* id, char* expr)
 {   
     SymTableEntry* ret = findSymTable(&table, id);
     dest[0] = '\0';
 
     if (ret == NULL)
     {
-        fprintf(stderr, "Error: %s not recognized\n", id);
-        return;
+        fprintf(stderr, "Error: %s not recognized at line %d\n", id, cont_lines);
+        return 0;
     }
 
  
@@ -169,10 +172,12 @@ void makeCodeAssignment(char* dest, char* id, char* expr)
 
     else
     {
-        fprintf(stderr, "Unsuported operation envolving string or float\n");
+        fprintf(stderr, "Unsuported operation envolving string or float at line %d\n",
+            cont_lines);
+        return 0;
     }
 
-
+    return 1;
 }
 
 
@@ -194,7 +199,7 @@ int makeCodeLoad(char* dest, char* id, int ref)
 
     if (ret == NULL)
     {
-        fprintf(stderr, "Error: %s not recognized\n", id);
+        fprintf(stderr, "Error: %s not recognized at line %d\n", id, cont_lines);
         return 0;
     }
 
@@ -264,7 +269,7 @@ int makeCodeComp(char* dest, char* id, char* expr)
 
     if (ret == NULL)
     {
-        fprintf(stderr, "Error: %s not recognized\n", id);
+        fprintf(stderr, "Error: %s not recognized at line %d\n", id, cont_lines);
         return 0;
     }
 

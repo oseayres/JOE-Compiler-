@@ -29,6 +29,8 @@ SymTable table;
 
 char jumps[10][4] = {"jnl", "jng", "jne", "jnz", "", "jz", "je", "jg", "jl", "jmp"};
 
+int cont_lines = 1;
+
 
 int main(int argc, char const *argv[])
 {
@@ -38,14 +40,18 @@ int main(int argc, char const *argv[])
         return 1;
     }
 
+    int n = strlen(argv[1]);
+    char s[n + 10];
+
+    int i;
+    for (i = 0; i < (n + 10); i++)
+        s[i] = '\0';
+    
     if (argc >= 4 && strcmp(argv[2], "-o") == 0)
-        out_file = fopen(argv[3], "w");
+        strcpy(s, argv[3]);
+    
     else
     {
-        int i, n = strlen(argv[1]);
-        char s[n + 10];
-        for (i = 0; i < (n + 10); i++)
-            s[i] = '\0';
         for (i = n - 1; i >= 0 && argv[1][i] != '.'; i--){}
 
         if (i == -1)
@@ -55,13 +61,10 @@ int main(int argc, char const *argv[])
         }
 
         strncpy(s, argv[1], i);
-        // printf("{%s}\n", s);
         strcat(s, ".asm");
-        // printf("{%s}\n", s);
-        out_file = fopen(s, "w");
     }
-
-
+    
+    out_file = fopen(s, "w");
     fprintf(out_file, "extern printf\n");
     fprintf(out_file, "extern scanf\n");
     fprintf(out_file, "section .data\n");
@@ -86,8 +89,13 @@ int main(int argc, char const *argv[])
     FILE* teclado = stdin;
     stdin = fopen(argv[1], "r");
     
-    yyparse();
-      
+    int ret = yyparse(); // chamada do analisador sintatico
+    if (ret == 1)
+    {
+        fclose(out_file);
+        remove(s);
+        return 1;
+    }  
 
     fprintf(out_file, "mov rax,0\n");  
     fprintf(out_file, "ret\n");
@@ -99,6 +107,7 @@ int main(int argc, char const *argv[])
     fclose(stdin);
 
     return 0;
+    
 }
 
 

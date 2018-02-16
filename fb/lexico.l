@@ -2,10 +2,11 @@
 	#include <string.h>
 	#include <stdio.h>
 	#include <y.tab.h>
+	#include <symbolTable.h>
 	void yyerror(char *); 
 %}
 
-ws [ \t\n]
+ws [ \t]
 letter [A-Za-z]
 digit [0-9]
 quotes ['\"']
@@ -14,7 +15,9 @@ text_str [^'\"']
 
 %%
 
-"//".*\n  {}
+"//".*\n  {
+	cont_lines++;
+}
 
 "var"	{
 	// printf("Lexic: var found\n");
@@ -136,7 +139,9 @@ text_str [^'\"']
 
 {ws}           { }
 
-. { yyerror("invalid character"); }
+\n             { cont_lines++; }
+
+. { yyerror("Invalid character"); }
 
 %%
 

@@ -20,10 +20,10 @@ void makeLabel(char* out_label);
 void makeCodeDeclaration(char* dest, char* identifier, Type type, char* value);
 void dumpCodeDeclarationEnd();
 
-void makeCodeRead(char* dest, char *id);
-void makeCodeWrite(char* dest, char *id, int ln);
+int makeCodeRead(char* dest, char *id);
+int makeCodeWrite(char* dest, char *id, int ln);
 
-void makeCodeAssignment(char* dest, char* id, char* expr);
+int makeCodeAssignment(char* dest, char* id, char* expr);
 int makeCodeLoad(char* dest, char* id, int ref);
 
 void makeCodeAdd(char* dest, char* value);
